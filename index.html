@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة المتابعة الدراسية الذكية</title>
+    <title>لوحة المتابعة الدراسية</title>
     <style>
         :root {
-            --bg-color: #E8EDF2;       /* اللون الأكثر انتشاراً: الأبيض الناعم الثلجي */
-            --card-bg: #FFFFFF;        /* بطاقات بيضاء ناصعة ومريحة للعين */
-            --primary-dark: #2C3947;   /* اللون الثاني: الرمادي الداكن للنصوص والهيدر */
-            --accent-blue: #547A95;    /* اللون الثالث: الأزرق الهادي للحواف والأزرار */
-            --gold-alert: #C2A56D;     /* اللون الأقل انتشاراً: الذهبي المطفي للتنبيهات والملاحظات */
-            --danger-color: #FF0000;   /* لزر الحذف الحساس فقط */
-            --muted-color: #7f8c8d;
+            --bg-color: #E8EDF2;       /* الخلفية الثلجية الناعمة */
+            --primary-dark: #2C3947;   /* الكحلي الداكن المعتمد */
+            --accent-blue: #547A95;    /* الأزرق الهادئ */
+            --gold-accent: #C2A56D;    /* الذهبي الفخم للأزرار والحدود */
+            --card-bg: #FFFFFF;        
+            --muted-gray: #7f8c8d;
+            --disabled-bg: #bdc3c7;
         }
 
         * {
+            box-shadow: none;
             box-sizing: border-box;
             margin: 0;
             padding: 0;
@@ -25,247 +26,360 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             color: var(--primary-dark);
-            line-height: 1.6;
-            padding: 20px;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1000px;
             margin: 0 auto;
+            width: 100%;
+            flex: 1;
         }
 
-        header {
+        /* التاريخ العلوي الصغير جهة اليمين */
+        .top-date-bar {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+            text-align: right;
+            padding-right: 5px;
+        }
+
+        /* الهيدر الفخم المستوحى من صورتك */
+        .main-header-box {
+            background-color: transparent;
+            border: 3px solid var(--primary-dark);
+            border-radius: 25px;
+            padding: 20px;
             text-align: center;
-            background-color: var(--primary-dark); /* الهيدر بالرمادي الداكن الفخم */
-            color: #E8EDF2;
-            padding: 30px 20px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            border-bottom: 4px solid var(--gold-alert); /* خط ذهبي أسفل الهيدر */
+            max-width: 420px;
+            margin: 0 auto 30px auto;
+            background-color: #f4f7f9;
         }
 
-        header h1 {
+        .main-header-box h1 {
             font-size: 2rem;
-            margin-bottom: 8px;
+            color: var(--primary-dark);
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        /* بار الأقسام الاحترافي المتناسق */
+        .nav-sections-bar {
+            display: flex;
+            background-color: var(--primary-dark);
+            border-radius: 10px;
+            margin-bottom: 25px;
+            overflow: hidden;
+            border-bottom: 4px solid var(--gold-accent);
+        }
+
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 15px 10px;
             font-weight: 700;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1.05rem;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        #current-date-display {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            font-weight: 400;
+        .nav-item:last-child {
+            border-left: none;
         }
 
-        .top-controls {
+        /* مادة مجدولة اليوم */
+        .nav-item.scheduled-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* مادة غير مجدولة اليوم تظهر باللون الرمادي الداكن الخامل */
+        .nav-item.not-scheduled-item {
+            background-color: #344454;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 500;
+        }
+        .nav-item.not-scheduled-item:hover {
+            background-color: #3a4d5f;
+        }
+
+        /* القسم النشط حالياً يقلب باللون الذهبي الفخم تماماً كالصورة */
+        .nav-item.active {
+            background-color: var(--gold-accent) !important;
+            color: var(--primary-dark) !important;
+        }
+
+        /* شريط التحكم العلوي للأزرار */
+        .control-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
-            gap: 15px;
-            flex-wrap: wrap;
+            margin-bottom: 20px;
         }
 
-        .status-sync {
-            background-color: var(--card-bg);
-            color: var(--primary-dark);
-            padding: 8px 12px;
-            border-radius: 6px;
+        .sync-badge {
+            background-color: #ffffff;
+            border: 1px solid #ced4da;
+            padding: 8px 16px;
+            border-radius: 8px;
             font-size: 0.9rem;
             font-weight: 600;
-            border: 1px solid var(--accent-blue);
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .btn {
-            padding: 10px 20px;
-            font-size: 0.95rem;
-            font-weight: 600;
+        .btn-edit-toggle {
+            background-color: var(--accent-blue);
+            color: white;
             border: none;
+            padding: 8px 16px;
             border-radius: 6px;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* تصميم الكرت الرئيسي الموحد (الموجز والمواد) */
+        .display-main-card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            border-right: 5px solid var(--gold-accent);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .card-header-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* كلاسات التحكم والتبديل الذكي بين الصفحات */
+        .view-pane { display: none; }
+        .view-pane.active-pane { display: block !important; }
+
+        /* تحسين وتوسيع مسافات قائمة الموجز لتصبح مريحة جداً في القراءة */
+        .summary-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .summary-list li {
+            font-size: 1.15rem;
+            margin-bottom: 24px; /* مسافة وافرة بين كل مادة ومادة */
+            padding-bottom: 16px;
+            border-bottom: 1px dashed #e9ecef;
+            line-height: 1.8;
+        }
+        .summary-list li:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+        /* تنسيق البيانات الأساسية للمادة داخل الموجز */
+        .summary-subject-row {
+            display: block;
+            margin-bottom: 8px; /* مسافة بين سطر المادة وسطر الملاحظة التابع لها */
+        }
+
+        /* صندوق الملاحظات المحسّن أسفل نص المادة مباشرة لمنع تداخل الكلمات */
+        .summary-note-block {
+            display: inline-block;
+            background-color: #FFF9E6; 
+            color: #B38600; 
+            padding: 4px 12px; 
+            border-radius: 6px; 
+            font-size: 0.95rem; 
+            border: 1px solid #FFE699; 
+            font-weight: 600;
+            margin-top: 6px;
+            margin-right: 25px; /* إزاحة خفيفة لتبدو تابعة للمادة */
+            line-height: 1.5;
+            max-width: 90%;
+        }
+
+        /* حقول العرض بداخل كروت المواد */
+        .subject-field-box {
+            margin-bottom: 20px;
+        }
+
+        .field-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .text-data-view {
+            font-size: 1rem;
+            color: var(--primary-dark);
+            padding-right: 5px;
+            min-height: 24px;
+        }
+
+        /* حقول الإدخال عند التعديل */
+        .field-textarea {
+            width: 100%;
+            min-height: 60px;
+            padding: 10px;
+            border: 1px solid var(--accent-blue);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1rem;
+            display: none;
+            margin-top: 5px;
+            resize: vertical;
+        }
+
+        body.edit-mode .field-textarea { display: block; }
+        body.edit-mode .text-data-view { display: none; }
+
+        /* زر فتح المرفق المصمم بشكل احترافي ومتطابق */
+        .btn-attachment {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        .btn:active {
-            transform: scale(0.98);
-        }
-
-        .btn-primary { background-color: var(--accent-blue); color: white; }
-        .btn-primary:hover { background-color: #3f5d72; }
-
-        .btn-success { background-color: #2ecc71; color: white; }
-        .btn-success:hover { background-color: #27ae60; }
-
-        .btn-danger { background-color: var(--danger-color); color: white; }
-        .btn-danger:hover { background-color: #cc0000; }
-
-        .btn-secondary { background-color: #95a5a6; color: white; }
-        .btn-secondary:hover { background-color: #7f8c8d; }
-
-        .summary-card {
-            background-color: var(--card-bg);
-            border-right: 5px solid var(--gold-alert); /* حافة ذهبية للموجز */
-            padding: 25px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
-            color: var(--primary-dark);
-        }
-
-        .summary-card h2 {
-            font-size: 1.4rem;
-            color: var(--primary-dark);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .summary-content { font-size: 1.05rem; color: var(--primary-dark); }
-        .summary-list { margin-right: 20px; margin-top: 10px; }
-        .summary-list li { margin-bottom: 8px; }
-
-        .subjects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .subject-card {
-            background-color: var(--card-bg);
-            border: 1px solid rgba(0,0,0,0.05);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
-            display: flex;
-            flex-direction: column;
-            color: var(--primary-dark);
-        }
-
-        .subject-card.scheduled { border-top: 4px solid var(--accent-blue); } /* حافة زرقاء للمواد المجدولة */
-        .subject-card.not-scheduled { border-top: 4px solid var(--muted-color); opacity: 0.85; }
-
-        .subject-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .subject-title { font-size: 1.25rem; font-weight: 700; color: var(--primary-dark); }
-        .badge { font-size: 0.75rem; font-weight: 700; padding: 4px 8px; border-radius: 12px; }
-        .badge-scheduled { background-color: var(--bg-color); color: var(--accent-blue); }
-        .badge-not-scheduled { background-color: #e2e8f0; color: var(--muted-color); }
-
-        .field-group { margin-bottom: 15px; display: flex; flex-direction: column; }
-        .field-label { font-size: 0.85rem; font-weight: 600; color: var(--muted-color); margin-bottom: 4px; }
-        
-        .field-input {
-            width: 100%;
-            min-height: 60px;
-            padding: 8px 12px;
-            border: 1px solid rgba(0,0,0,0.05);
+            background-color: var(--accent-blue);
+            color: white !important;
+            text-decoration: none !important;
+            padding: 10px 20px;
             border-radius: 6px;
-            background-color: #fcfcfc;
+            font-weight: 700;
             font-size: 0.95rem;
-            font-family: inherit;
-            resize: vertical;
+            margin-top: 8px;
+            transition: background-color 0.2s;
+        }
+        .btn-attachment:hover { background-color: var(--primary-dark); }
+
+        /* تارة التنبيه الذهبية بداخل المادة المجدولة */
+        .day-status-badge {
+            font-size: 0.8rem;
+            background-color: var(--gold-accent);
             color: var(--primary-dark);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 700;
         }
 
-        .field-input:disabled {
-            background-color: transparent;
-            border-color: transparent;
-            padding: 0;
-            resize: none;
-            min-height: auto;
-        }
-
-        .link-preview-container a {
-            display: inline-block;
-            margin-top: 5px;
-            color: var(--accent-blue);
-            text-decoration: underline;
-            font-size: 0.9rem;
-            font-weight: bold;
-        }
-
-        body.edit-mode .field-input:not(:disabled) { background-color: #ffffff; border-color: var(--accent-blue); }
-
-        .action-panel {
+        /* بنل المسؤول السفلي */
+        .admin-action-footer {
             display: none;
             justify-content: flex-end;
             gap: 12px;
             background-color: var(--card-bg);
             padding: 15px 25px;
             border-radius: 12px;
-            border: 1px solid var(--accent-blue);
+            border: 2px solid var(--accent-blue);
             margin-top: 20px;
         }
+        body.edit-mode .admin-action-footer { display: flex; position: sticky; bottom: 20px; z-index: 10; }
 
-        body.edit-mode .action-panel { display: flex; position: sticky; bottom: 20px; z-index: 10; }
-
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(44, 57, 71, 0.4); display: flex; justify-content: center; align-items: center;
-            z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+        .btn {
+            padding: 10px 20px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; font-size: 0.95rem;
         }
-        .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal { background-color: var(--card-bg); padding: 25px; border-radius: 12px; width: 100%; max-width: 400px; color: var(--primary-dark); border: 2px solid var(--accent-blue); }
-        .modal h3 { margin-bottom: 15px; color: var(--primary-dark); }
-        .modal input[type="password"] { width: 100%; padding: 10px 12px; border: 1px solid var(--accent-blue); border-radius: 6px; text-align: center; margin-bottom: 15px; }
-        .modal-error { color: var(--danger-color); font-size: 0.85rem; margin-bottom: 15px; display: none; font-weight: 600; }
-        .modal-buttons { display: flex; justify-content: flex-end; gap: 10px; }
+        .btn-success { background-color: #2ecc71; color: white; }
+        .btn-secondary { background-color: #95a5a6; color: white; }
+        .btn-danger { background-color: #e74c3c; color: white; }
+
+        /* بوب اب التحقق */
+        .modal-mask {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(44, 57, 71, 0.5); display: flex; justify-content: center; align-items: center;
+            z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+        }
+        .modal-mask.show { opacity: 1; pointer-events: auto; }
+        .modal-box { background-color: white; padding: 25px; border-radius: 12px; width: 100%; max-width: 380px; text-align: center; border: 2px solid var(--gold-accent); }
+        .modal-box input { width: 100%; padding: 10px; border: 1px solid var(--accent-blue); border-radius: 6px; text-align: center; margin: 15px 0; font-size: 1rem; }
+
+        /* تذييل الصفحة الفخم لحفظ الحقوق باسم زاد أشري */
+        .footer-credits-bar {
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+            background-color: var(--primary-dark);
+            color: #ffffff;
+            border-top: 4px solid var(--gold-accent);
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .footer-credits-bar span {
+            color: var(--gold-accent);
+            font-weight: 700;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <header>
-        <h1>لوحة المتابعة الدراسية الذكية السحابية</h1>
-        <div id="current-date-display">جاري تحميل التاريخ...</div>
+    <div class="top-date-bar" id="live-date-text">جاري تحميل التاريخ...</div>
+
+    <header class="main-header-box">
+        <h1>لوحة المتابعة الدراسية</h1>
     </header>
 
-    <div class="top-controls">
-        <div class="status-sync">☁️ متصل بالسحابة تلقائياً</div>
-        <button id="enter-edit-btn" class="btn btn-primary" onclick="openPasswordModal()">🔒 تفعيل التعديل</button>
+    <nav class="nav-sections-bar" id="navigation-root-bar"></nav>
+
+    <div class="control-row">
+        <div class="sync-badge">
+            <span style="color: #2ecc71;">●</span> التزامن السحابي: متصل ومؤمن
+        </div>
+        <button id="toggle-edit-mode-btn" class="btn-edit-toggle" onclick="promptPasswordVerification()">🔧 تفعيل التعديل</button>
     </div>
 
-    <section class="summary-card">
-        <h2>📋 موجز وملاحظات اليوم</h2>
-        <div id="summary-view" class="summary-content">جاري مزامنة وجلب البيانات السحابية الحالية...</div>
-    </section>
+    <main class="display-main-card">
+        
+        <div id="view-pane-home" class="view-pane active-pane">
+            <div class="card-header-title">📋 الموجز الدراسي اليومي</div>
+            <div id="dynamic-summary-target">جاري مزامنة المدخلات الدراسية الحالية...</div>
+        </div>
 
-    <main class="subjects-grid" id="subjects-display-grid"></main>
+        <div id="subject-cards-dynamic-container"></div>
 
-    <footer class="action-panel" id="edit-mode-footer">
-        <button class="btn btn-danger" onclick="clearCurrentDateData()" style="margin-left: auto;">🗑️ مسح بيانات اليوم</button>
-        <button class="btn btn-secondary" onclick="cancelEditing()">✖ إلغاء</button>
-        <button class="btn btn-success" onclick="saveAllEdits()" style="background-color: #2ecc71;">💾 حفظ التعديلات سحابياً</button>
+    </main>
+
+    <footer class="admin-action-footer">
+        <button class="btn btn-danger" onclick="wipeTodayCloudData()" style="margin-left: auto;">🗑️ مسح بيانات اليوم</button>
+        <button class="btn btn-secondary" onclick="abortEditingSession()" style="margin-right: 8px;">✖ إلغاء</button>
+        <button class="btn btn-success" onclick="commitEditsToCloud()">💾 حفظ التعديلات سحابياً</button>
     </footer>
 </div>
 
-<div class="modal-overlay" id="password-modal-overlay" onclick="closePasswordModalViaOverlay(event)">
-    <div class="modal">
-        <h3>أدخل كلمة سر التعديل</h3>
-        <input type="password" id="admin-password-input" placeholder="أدخل الرمز السري هنا..." onkeydown="handleModalKeyDown(event)">
-        <div id="modal-error-txt" class="modal-error">كلمة السر خاطئة! تم رفض الإذن.</div>
-        <div class="modal-buttons">
-            <button class="btn btn-secondary" onclick="closePasswordModal()">إلغاء</button>
-            <button class="btn btn-primary" onclick="submitPasswordVerification()">تحقق</button>
+<footer class="footer-credits-bar">
+    جميع الحقوق محفوظة © لوحة المتابعة الدراسية الذكية | تم التطوير بواسطة <span>zyad ashry</span>
+</footer>
+
+<div class="modal-mask" id="auth-modal-mask" onclick="if(event.target.id === 'auth-modal-mask') closeVerificationModal()">
+    <div class="modal-box">
+        <h3 style="color: var(--primary-dark);">التحقق السري للمسؤول</h3>
+        <input type="password" id="auth-key-field" placeholder="أدخل رمز التعديل السري..." onkeydown="if(event.key === 'Enter') executeAuthVerification()">
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button class="btn btn-secondary" onclick="closeVerificationModal()">إلغاء</button>
+            <button class="btn btn-success" style="background-color: var(--accent-blue);" onclick="executeAuthVerification()">تحقق</button>
         </div>
     </div>
 </div>
 
 <script>
-    const FIREBASE_DB_URL = "https://school-dashboard-4a36d-default-rtdb.firebaseio.com";
+    const FIREBASE_DB_ENDPOINT = "https://school-dashboard-4a36d-default-rtdb.firebaseio.com";
+    const SECRET_PROTECTION_KEY = "9561";
 
     const WEEKLY_SCHEDULE_MAP = {
         "الأحد": ["تقنيه رقميه", "انجليزي", "كيمياء", "فنون", "رياضيات"],
@@ -277,219 +391,277 @@
     };
 
     const MASTER_SUBJECT_LIST = ["رياضيات", "احياء", "انجليزي", "كيمياء", "توحيد", "فنون", "تقنيه رقميه"];
-    const PROTECTION_KEY = "9561";
 
-    let currentISODate = "";
-    let currentDayOfWeek = "";
+    let calculatedISODate = "";
+    let dayNameArabic = "";
+    let systemSortedSubjects = [];
 
     window.addEventListener('DOMContentLoaded', () => {
-        initializeDateTracking();
-        renderSubjectGridStructure();
-        fetchCloudData();
+        setupSystemClock();
+        processSubjectSorting();
+        buildNavigationTabs();
+        buildSubjectCardsMarkup();
+        synchronizeCloudContent();
     });
 
-    function initializeDateTracking() {
-        const localTimeInstance = new Date();
-        const localizedDaysArray = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
-        currentDayOfWeek = localizedDaysArray[localTimeInstance.getDay()];
+    function setupSystemClock() {
+        const dateObj = new Date();
+        const daysArabic = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+        dayNameArabic = daysArabic[dateObj.getDay()];
         
-        const calendarYear = localTimeInstance.getFullYear();
-        const calendarMonth = String(localTimeInstance.getMonth() + 1).padStart(2, '0');
-        const calendarDay = String(localTimeInstance.getDate()).padStart(2, '0');
-        currentISODate = `${calendarYear}-${calendarMonth}-${calendarDay}`;
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        calculatedISODate = `${year}-${month}-${day}`;
 
-        const readableFormatString = localTimeInstance.toLocaleDateString('ar-SA', { month: 'long', day: 'numeric', year: 'numeric' });
-        document.getElementById('current-date-display').innerText = `${currentDayOfWeek}، ${readableFormatString}`;
+        const formattedText = dateObj.toLocaleDateString('ar-SA', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        document.getElementById('live-date-text').innerText = formattedText;
     }
 
-    function renderSubjectGridStructure() {
-        const gridRootElement = document.getElementById('subjects-display-grid');
-        gridRootElement.innerHTML = '';
-        const todaysScheduledSubjects = WEEKLY_SCHEDULE_MAP[currentDayOfWeek] || [];
-        let finalProcessingOrder = [...todaysScheduledSubjects];
-
-        MASTER_SUBJECT_LIST.forEach(sub => {
-            if (!finalProcessingOrder.includes(sub)) finalProcessingOrder.push(sub);
-        });
-
-        finalProcessingOrder.forEach(subjectName => {
-            const isCurrentlyScheduled = todaysScheduledSubjects.includes(subjectName);
-            const card = buildSubjectComponentMarkup(subjectName, isCurrentlyScheduled);
-            gridRootElement.appendChild(card);
+    function processSubjectSorting() {
+        const todaySchedule = WEEKLY_SCHEDULE_MAP[dayNameArabic] || [];
+        systemSortedSubjects = [...todaySchedule];
+        MASTER_SUBJECT_LIST.forEach(subject => {
+            if (!systemSortedSubjects.includes(subject)) {
+                systemSortedSubjects.push(subject);
+            }
         });
     }
 
-    function buildSubjectComponentMarkup(name, isScheduled) {
-        const cardContainer = document.createElement('article');
-        cardContainer.className = `subject-card ${isScheduled ? 'scheduled' : 'not-scheduled'}`;
-        cardContainer.dataset.subjectName = name;
+    function buildNavigationTabs() {
+        const navContainer = document.getElementById('navigation-root-bar');
+        navContainer.innerHTML = '';
 
-        cardContainer.innerHTML = `
-            <div class="subject-header">
-                <span class="subject-title">${name}</span>
-                ${isScheduled ? `<span class="badge badge-scheduled">مجدولة اليوم</span>` : `<span class="badge badge-not-scheduled">غير مجدولة اليوم</span>`}
-            </div>
-            <div class="field-group">
-                <label class="field-label" for="input-${name}-assignments">الواجبات</label>
-                <textarea id="input-${name}-assignments" class="field-input" data-field-type="assignments" disabled placeholder="لا توجد واجبات مسجلة."></textarea>
-            </div>
-            <div class="field-group">
-                <label class="field-label" for="input-${name}-projects">المشاريع</label>
-                <textarea id="input-${name}-projects" class="field-input" data-field-type="projects" disabled placeholder="لا توجد مشاريع مسجلة."></textarea>
-            </div>
-            <div class="field-group">
-                <label class="field-label" for="input-${name}-summaries">الملخصات (روابط PDF أو صور)</label>
-                <textarea id="input-${name}-summaries" class="field-input" data-field-type="summaries" disabled placeholder="لا توجد ملخصات متوفرة."></textarea>
-                <div id="link-preview-${name}" class="link-preview-container"></div>
-            </div>
-            <div class="field-group">
-                <label class="field-label" for="input-${name}-notes">ملاحظات وتنبيهات مخصصة</label>
-                <textarea id="input-${name}-notes" class="field-input" data-field-type="notes" disabled placeholder="لا توجد ملاحظات إضافية."></textarea>
-            </div>
-        `;
-        return cardContainer;
+        const homeTab = document.createElement('div');
+        homeTab.className = 'nav-item active';
+        homeTab.id = 'tab-trigger-home';
+        homeTab.innerText = 'الرئيسية';
+        homeTab.onclick = () => activateViewSegment('home');
+        navContainer.appendChild(homeTab);
+
+        const todaySchedule = WEEKLY_SCHEDULE_MAP[dayNameArabic] || [];
+
+        systemSortedSubjects.forEach(subject => {
+            const tab = document.createElement('div');
+            tab.id = `tab-trigger-${subject}`;
+            
+            if (todaySchedule.includes(subject)) {
+                tab.className = 'nav-item scheduled-item';
+                tab.innerText = subject;
+            } else {
+                tab.className = 'nav-item not-scheduled-item';
+                tab.innerText = subject;
+            }
+            tab.onclick = () => activateViewSegment(subject);
+            navContainer.appendChild(tab);
+        });
     }
 
-    function fetchCloudData() {
-        fetch(`${FIREBASE_DB_URL}/${currentISODate}.json`)
-        .then(res => res.json())
+    function buildSubjectCardsMarkup() {
+        const cardsContainer = document.getElementById('subject-cards-dynamic-container');
+        cardsContainer.innerHTML = '';
+        const todaySchedule = WEEKLY_SCHEDULE_MAP[dayNameArabic] || [];
+
+        systemSortedSubjects.forEach(subject => {
+            const isScheduled = todaySchedule.includes(subject);
+            const pane = document.createElement('div');
+            pane.id = `view-pane-${subject}`;
+            pane.className = 'view-pane';
+
+            pane.innerHTML = `
+                <div class="card-header-title">
+                    <span>${subject}</span>
+                    ${isScheduled ? '<span class="day-status-badge">مجدولة اليوم</span>' : ''}
+                </div>
+                
+                <div class="subject-field-box">
+                    <div class="field-title">📝 الواجبات المدرسية والمهام</div>
+                    <div class="text-data-view" id="view-text-${subject}-assignments">لا توجد واجبات مسجلة لهذه المادة اليوم.</div>
+                    <textarea class="field-textarea" id="edit-input-${subject}-assignments" placeholder="اكتب الواجبات هنا..."></textarea>
+                </div>
+
+                <div class="subject-field-box">
+                    <div class="field-title">🚀 المشاريع والأعمال الأدائية</div>
+                    <div class="text-data-view" id="view-text-${subject}-projects">لا توجد مشاريع قائمة.</div>
+                    <textarea class="field-textarea" id="edit-input-${subject}-projects" placeholder="اكتب متطلبات المشاريع هنا..."></textarea>
+                </div>
+
+                <div class="subject-field-box">
+                    <div class="field-title">🔗 روابط الملخصات والمرفقات</div>
+                    <div class="text-data-view" id="view-text-${subject}-summaries">لا توجد ملخصات متوفرة.</div>
+                    <textarea class="field-textarea" id="edit-input-${subject}-summaries" placeholder="ضع رابط المرفق السحابي (http://...) هنا..."></textarea>
+                    <div id="attachment-preview-area-${subject}"></div>
+                </div>
+
+                <div class="subject-field-box">
+                    <div class="field-title">📌 ملاحظات وتنبيهات مخصصة</div>
+                    <div class="text-data-view" id="view-text-${subject}-notes">لا توجد ملاحظات إضافية.</div>
+                    <textarea class="field-textarea" id="edit-input-${subject}-notes" placeholder="اكتب أي تنبيه أو ملاحظة مخصصة هنا..."></textarea>
+                </div>
+            `;
+            cardsContainer.appendChild(pane);
+        });
+    }
+
+    function activateViewSegment(targetId) {
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.view-pane').forEach(el => el.classList.remove('active-pane'));
+
+        if (targetId === 'home') {
+            document.getElementById('tab-trigger-home').classList.add('active');
+            document.getElementById('view-pane-home').classList.add('active-pane');
+        } else {
+            document.getElementById(`tab-trigger-${targetId}`).classList.add('active');
+            document.getElementById(`view-pane-${targetId}`).classList.add('active-pane');
+        }
+    }
+
+    function synchronizeCloudContent() {
+        fetch(`${FIREBASE_DB_ENDPOINT}/${calculatedISODate}.json`)
+        .then(r => r.json())
         .then(data => {
-            const textareas = document.querySelectorAll('.field-input');
-            textareas.forEach(input => input.value = '');
+            MASTER_SUBJECT_LIST.forEach(sub => {
+                const fields = ['assignments', 'projects', 'summaries', 'notes'];
+                fields.forEach(f => {
+                    const viewElement = document.getElementById(`view-text-${sub}-${f}`);
+                    const inputElement = document.getElementById(`edit-input-${sub}-${f}`);
+                    
+                    let val = (data && data[sub] && data[sub][f]) ? data[sub][f].trim() : "";
+                    
+                    if(inputElement) inputElement.value = val;
 
-            if (data) {
-                textareas.forEach(input => {
-                    const sub = input.closest('.subject-card').dataset.subjectName;
-                    const type = input.dataset.fieldType;
-                    if (data[sub] && data[sub][type]) {
-                        input.value = data[sub][type];
+                    if(viewElement) {
+                        if (f === 'assignments' && !val) viewElement.innerText = "لا توجد واجبات مسجلة لهذه المادة اليوم.";
+                        else if (f === 'projects' && !val) viewElement.innerText = "لا توجد مشاريع قائمة.";
+                        else if (f === 'summaries' && !val) viewElement.innerText = "لا توجد ملخصات متوفرة.";
+                        else if (f === 'notes' && !val) viewElement.innerText = "لا توجد ملاحظات إضافية.";
+                        else viewElement.innerText = val;
                     }
                 });
-            }
-            generateAutomatedSummary();
-            updateSummariesLinks();
-        }).catch(err => console.error("خطأ في جلب البيانات:", err));
-    }
 
-    function updateSummariesLinks() {
-        MASTER_SUBJECT_LIST.forEach(subjectName => {
-            const targetInput = document.getElementById(`input-${subjectName}-summaries`);
-            const previewContainer = document.getElementById(`link-preview-${subjectName}`);
-            if (targetInput && previewContainer) {
-                const value = targetInput.value.trim();
-                if (value.startsWith('http://') || value.startsWith('https://')) {
-                    previewContainer.innerHTML = `<a href="${value}" target="_blank" style="color: var(--accent-blue);">🔗 فتح ملف الملخص المرفق (PDF/صورة)</a>`;
+                const sumVal = document.getElementById(`edit-input-${sub}-summaries`).value.trim();
+                const previewDiv = document.getElementById(`attachment-preview-area-${sub}`);
+                const textSumView = document.getElementById(`view-text-${sub}-summaries`);
+                
+                if (sumVal.startsWith('http://') || sumVal.startsWith('https://')) {
+                    if (textSumView) textSumView.style.display = 'none';
+                    previewDiv.innerHTML = `<a href="${sumVal}" target="_blank" class="btn-attachment">📄 فتح ملف الملخص المرفق</a>`;
                 } else {
-                    previewContainer.innerHTML = '';
+                    if (textSumView) textSumView.style.style = 'block';
+                    previewDiv.innerHTML = '';
                 }
-            }
+            });
+            compileDashboardSummary();
         });
     }
 
-    function generateAutomatedSummary() {
-        const displayDestination = document.getElementById('summary-view');
-        const processingClassesList = WEEKLY_SCHEDULE_MAP[currentDayOfWeek] || [];
+    // بناء الموجز مع تباعد الأسطر المريح والملاحظات المنفصلة
+    function compileDashboardSummary() {
+        const display = document.getElementById('dynamic-summary-target');
+        const activeSchedule = WEEKLY_SCHEDULE_MAP[dayNameArabic] || [];
 
-        if (processingClassesList.length === 0) {
-            displayDestination.innerHTML = `<strong>لا توجد مواد مجدولة اليوم (عطلة نهاية الأسبوع).</strong>`;
+        if (activeSchedule.length === 0) {
+            display.innerHTML = `<p style="font-weight:700; color: var(--muted-gray);">اليوم عطلة نهاية الأسبوع، لا توجد حصص مجدولة.</p>`;
             return;
         }
 
-        let html = `<p>الموجز الدراسي لليوم مرتب حسب الحصص:</p><ol class="summary-list">`;
-        processingClassesList.forEach(subjectName => {
-            const assignEl = document.getElementById(`input-${subjectName}-assignments`);
-            const summaryEl = document.getElementById(`input-${subjectName}-summaries`);
-            const notesEl = document.getElementById(`input-${subjectName}-notes`);
-            
-            let assignTxt = assignEl ? assignEl.value.trim() : "";
-            let summaryTxt = summaryEl ? summaryEl.value.trim() : "";
-            let notesTxt = notesEl ? notesEl.value.trim() : "";
+        let html = `<ol class="summary-list">`;
+        activeSchedule.forEach((subject, index) => {
+            const assign = document.getElementById(`edit-input-${subject}-assignments`).value.trim();
+            const sumLink = document.getElementById(`edit-input-${subject}-summaries`).value.trim();
+            const notes = document.getElementById(`edit-input-${subject}-notes`).value.trim();
 
-            let mainTaskDisplay = "";
-            if (assignTxt) {
-                mainTaskDisplay = assignTxt;
-            } else if (summaryTxt) {
-                mainTaskDisplay = `<span style="color: var(--accent-blue); font-weight: bold;">💡 يوجد ملخص مرفق للمادة!</span>`;
+            let details = "";
+            if (assign) {
+                details = `<span style="color:var(--primary-dark);">${assign}</span>`;
+            } else if (sumLink.startsWith('http')) {
+                details = `<span style="color: var(--accent-blue); font-weight: 700;">💡 يتوفر ملف ملخص مرفق بداخل قسم المادة</span>`;
             } else {
-                mainTaskDisplay = `<em>(لا يوجد واجبات أو ملخصات)</em>`;
+                details = `<span style="color: var(--muted-gray); font-style: italic;">(لا يوجد واجبات أو ملخصات مسجلة اليوم)</span>`;
             }
 
-            let notesDisplay = notesTxt ? ` <span style="background-color: #fcf8e3; color: var(--gold-alert); padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; margin-right: 8px; border: 1px solid var(--gold-alert); font-weight: bold;">📝 ملاحظة: ${notesTxt}</span>` : "";
+            // وضع الملاحظة في سطر منفصل مستقل (block) مع مسافة بادئة مريحة للعين
+            let noteBlock = notes ? `<div class="summary-note-block">⚠️ ملاحظة: ${notes}</div>` : "";
 
-            html += `<li><strong>${subjectName}</strong> — ${mainTaskDisplay}${notesDisplay}</li>`;
+            html += `
+                <li>
+                    <div class="summary-subject-row">
+                        <strong style="color: var(--accent-blue); cursor: pointer;" onclick="activateViewSegment('${subject}')">${index + 1}. ${subject} — </strong> 
+                        ${details}
+                    </div>
+                    ${noteBlock}
+                </li>`;
         });
         html += `</ol>`;
-        displayDestination.innerHTML = html;
+        display.innerHTML = html;
     }
 
-    function openPasswordModal() {
-        if (document.body.classList.contains('edit-mode')) { terminateEditSessionMode(); return; }
-        document.getElementById('modal-error-txt').style.display = 'none';
-        document.getElementById('admin-password-input').value = '';
-        document.getElementById('password-modal-overlay').classList.add('active');
-        setTimeout(() => document.getElementById('admin-password-input').focus(), 50);
+    function promptPasswordVerification() {
+        if (document.body.classList.contains('edit-mode')) { disableEditingEnvironment(); return; }
+        document.getElementById('auth-key-field').value = '';
+        document.getElementById('auth-modal-mask').classList.add('show');
+        setTimeout(() => document.getElementById('auth-key-field').focus(), 100);
     }
 
-    function closePasswordModal() { document.getElementById('password-modal-overlay').classList.remove('active'); }
-    function closePasswordModalViaOverlay(event) { if (event.target.id === 'password-modal-overlay') closePasswordModal(); }
-    function handleModalKeyDown(event) { if (event.key === 'Enter') submitPasswordVerification(); }
+    function closeVerificationModal() { document.getElementById('auth-modal-mask').classList.remove('show'); }
 
-    function submitPasswordVerification() {
-        if (document.getElementById('admin-password-input').value === PROTECTION_KEY) {
-            closePasswordModal();
-            initializeActiveEditingEnvironment();
+    function executeAuthVerification() {
+        if (document.getElementById('auth-key-field').value === SECRET_PROTECTION_KEY) {
+            closeVerificationModal();
+            enableEditingEnvironment();
         } else {
-            document.getElementById('modal-error-txt').style.display = 'block';
+            alert("رمز الحماية السري خاطئ!");
         }
     }
 
-    function initializeActiveEditingEnvironment() {
+    function enableEditingEnvironment() {
         document.body.classList.add('edit-mode');
-        document.getElementById('enter-edit-btn').innerText = "🔒 قفل النظام";
-        document.getElementById('enter-edit-btn').className = "btn btn-secondary";
-        document.querySelectorAll('.field-input').forEach(field => field.removeAttribute('disabled'));
+        document.getElementById('toggle-edit-mode-btn').innerText = "🔒 قفل التعديل";
+        
+        document.getElementById('view-pane-home').classList.add('active-pane');
+        document.querySelectorAll('.view-pane').forEach(pane => {
+            pane.classList.add('active-pane');
+            const textSummaryView = pane.querySelector(`[id^="view-text-"][id$="-summaries"]`);
+            if(textSummaryView) textSummaryView.style.display = 'none';
+        });
     }
 
-    function terminateEditSessionMode() {
+    function disableEditingEnvironment() {
         document.body.classList.remove('edit-mode');
-        document.getElementById('enter-edit-btn').innerText = "🔒 تفعيل التعديل";
-        document.getElementById('enter-edit-btn').className = "btn btn-primary";
-        document.querySelectorAll('.field-input').forEach(field => field.setAttribute('disabled', 'true'));
+        document.getElementById('toggle-edit-mode-btn').innerText = "🔧 تفعيل التعديل";
+        activateViewSegment('home');
     }
 
-    function saveAllEdits() {
-        const payload = {};
+    function commitEditsToCloud() {
+        const packet = {};
         MASTER_SUBJECT_LIST.forEach(sub => {
-            payload[sub] = {
-                assignments: document.getElementById(`input-${sub}-assignments`).value.trim(),
-                projects: document.getElementById(`input-${sub}-projects`).value.trim(),
-                summaries: document.getElementById(`input-${sub}-summaries`).value.trim(),
-                notes: document.getElementById(`input-${sub}-notes`).value.trim()
+            packet[sub] = {
+                assignments: document.getElementById(`edit-input-${sub}-assignments`).value.trim(),
+                projects: document.getElementById(`edit-input-${sub}-projects`).value.trim(),
+                summaries: document.getElementById(`edit-input-${sub}-summaries`).value.trim(),
+                notes: document.getElementById(`edit-input-${sub}-notes`).value.trim()
             };
         });
 
-        fetch(`${FIREBASE_DB_URL}/${currentISODate}.json`, {
-            method: 'PUT',
-            body: JSON.stringify(payload)
-        })
+        fetch(`${FIREBASE_DB_ENDPOINT}/${calculatedISODate}.json`, { method: 'PUT', body: JSON.stringify(packet) })
         .then(() => {
-            terminateEditSessionMode();
-            generateAutomatedSummary();
-            updateSummariesLinks();
-            alert("تم حفظ البيانات والملاحظات بنجاح بالبليتة الكلاسيكية الجديدة! 🎨✨");
-        })
-        .catch(err => alert("حدث خطأ أثناء الحفظ السحابي: " + err));
+            disableEditingEnvironment();
+            synchronizeCloudContent();
+            alert("تم حفظ وتحديث البيانات في السحابة بنجاح! 💾✨");
+        });
     }
 
-    function cancelEditing() { fetchCloudData(); terminateEditSessionMode(); }
+    function abortEditingSession() {
+        synchronizeCloudContent();
+        disableEditingEnvironment();
+    }
 
-    function clearCurrentDateData() {
-        if (!confirm("هل أنت متأكد من حذف جميع بيانات وملاحظات اليوم من السحابة نهائياً؟")) return;
-
-        fetch(`${FIREBASE_DB_URL}/${currentISODate}.json`, { method: 'DELETE' })
+    function wipeTodayCloudData() {
+        if(!confirm("هل أنت متأكد تماماً من حذف جميع مدخلات هذا اليوم من قاعدة البيانات السحابية؟")) return;
+        fetch(`${FIREBASE_DB_ENDPOINT}/${calculatedISODate}.json`, { method: 'DELETE' })
         .then(() => {
-            terminateEditSessionMode();
-            fetchCloudData();
+            disableEditingEnvironment();
+            synchronizeCloudContent();
         });
     }
 </script>
