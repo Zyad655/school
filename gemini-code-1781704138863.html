@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة المتابعة الدراسية الذكية</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f1c40f;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --muted-color: #7f8c8d;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* الهيدر والتاريخ */
+        header {
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-color), #34495e);
+            color: white;
+            padding: 30px 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        #current-date-display {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        /* أدوات التحكم العلوية */
+        .top-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .storage-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 10px 15px;
+            border-radius: 6px;
+            border: 1px solid #ffeeba;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+
+        /* قسم الموجز */
+        .summary-card {
+            background-color: #eef7fe;
+            border-right: 5px solid var(--accent-color);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+        }
+
+        .summary-card h2 {
+            font-size: 1.4rem;
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .summary-content {
+            font-size: 1.05rem;
+            color: #34495e;
+        }
+
+        .summary-list {
+            margin-right: 20px;
+            margin-top: 10px;
+        }
+
+        .summary-list li {
+            margin-bottom: 8px;
+        }
+
+        /* شبكة المواد */
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .subject-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+            transition: box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .subject-card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .subject-card.scheduled {
+            border-top: 4px solid var(--success-color);
+        }
+
+        .subject-card.not-scheduled {
+            border-top: 4px solid var(--muted-color);
+            opacity: 0.85;
+        }
+
+        .subject-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .subject-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+
+        .badge-scheduled {
+            background-color: #e8f8f5;
+            color: var(--success-color);
+        }
+
+        .badge-not-scheduled {
+            background-color: #f2f4f4;
+            color: var(--muted-color);
+        }
+
+        .field-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .field-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .field-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--muted-color);
+            margin-bottom: 4px;
+        }
+
+        .field-input {
+            width: 100%;
+            min-height: 60px;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: #fafbfc;
+            font-size: 0.95rem;
+            font-family: inherit;
+            resize: vertical;
+            color: var(--text-color);
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        .field-input:disabled {
+            background-color: #fafbfc;
+            border-color: transparent;
+            padding-left: 0;
+            padding-right: 0;
+            resize: none;
+            min-height: auto;
+            cursor: default;
+        }
+
+        .link-preview-container a {
+            display: inline-block;
+            margin-top: 5px;
+            color: var(--accent-color);
+            text-decoration: underline;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        /* وضع التعديل النشط */
+        body.edit-mode .field-input:not(:disabled) {
+            background-color: #ffffff;
+            border-color: #cbd5e1;
+        }
+
+        body.edit-mode .field-input:not(:disabled):focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+        }
+
+        /* شريط الحفظ السفلي */
+        .action-panel {
+            display: none;
+            justify-content: flex-end;
+            gap: 12px;
+            background-color: #ffffff;
+            padding: 15px 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-top: 20px;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        body.edit-mode .action-panel {
+            display: flex;
+            position: sticky;
+            bottom: 20px;
+            z-index: 10;
+        }
+
+        /* النافذة المنبثقة للرقم السري */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            transform: translateY(-20px);
+            transition: transform 0.2s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal h3 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            font-size: 1.3rem;
+        }
+
+        .modal input[type="password"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .modal input[type="password"]:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .modal-error {
+            color: var(--danger-color);
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            display: none;
+            font-weight: 600;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            header {
+                padding: 20px 10px;
+            }
+            header h1 {
+                font-size: 1.6rem;
+            }
+            .top-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .top-controls .btn {
+                justify-content: center;
+            }
+            .action-panel {
+                flex-direction: column-reverse;
+            }
+            .action-panel .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1 id="page-main-heading">لوحة المتابعة الدراسية</h1>
+        <div id="current-date-display">جاري تحميل التاريخ...</div>
+    </header>
+
+    <div class="top-controls">
+        <div id="storage-warning-msg" class="storage-warning">متصفحك لا يدعم حفظ البيانات؛ التعديلات لن تُحفظ عند تحديث الصفحة.</div>
+        <button id="enter-edit-btn" class="btn btn-primary" onclick="openPasswordModal()">🔒 تفعيل التعديل</button>
+    </div>
+
+    <section class="summary-card" aria-labelledby="summary-heading">
+        <h2 id="summary-heading">📋 موجز واجبات اليوم</h2>
+        <div id="summary-view" class="summary-content">لا توجد مواد مجدولة اليوم.</div>
+    </section>
+
+    <main class="subjects-grid" id="subjects-display-grid">
+        </main>
+
+    <footer class="action-panel" id="edit-mode-footer">
+        <button class="btn btn-danger" onclick="clearCurrentDateData()" style="margin-left: auto;">🗑️ مسح بيانات اليوم</button>
+        <button class="btn btn-secondary" onclick="cancelEditing()">✖ إلغاء</button>
+        <button class="btn btn-success" onclick="saveAllEdits()">💾 حفظ التعديلات</button>
+    </footer>
+</div>
+
+<div class="modal-overlay" id="password-modal-overlay" onclick="closePasswordModalViaOverlay(event)">
+    <div class="modal" role="dialog" aria-modal="true">
+        <h3>أدخل كلمة سر التعديل</h3>
+        <input type="password" id="admin-password-input" placeholder="أدخل الرمز السري هنا..." onkeydown="handleModalKeyDown(event)">
+        <div id="modal-error-txt" class="modal-error">كلمة السر خاطئة! تم رفض الإذن.</div>
+        <div class="modal-buttons">
+            <button class="btn btn-secondary" onclick="closePasswordModal()">إلغاء</button>
+            <button class="btn btn-primary" onclick="submitPasswordVerification()">تحقق</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // جدول الحصص المحدث بدقة حسب طلبك
+    const WEEKLY_SCHEDULE_MAP = {
+        "الأحد": ["تقنيه رقميه", "انجليزي", "كيمياء", "فنون", "رياضيات"],
+        "الإثنين": ["انجليزي", "كيمياء", "تقنيه رقميه", "احياء", "رياضيات", "توحيد"],
+        "الثلاثاء": ["تقنيه رقميه", "احياء", "فنون", "انجليزي", "رياضيات", "كيمياء"],
+        "الأربعاء": ["رياضيات", "انجليزي", "احياء", "كيمياء", "تقنيه رقميه"],
+        "الخميس": ["انجليزي", "احياء", "كيمياء", "رياضيات"],
+        "الجمعة": [], // يوم عطلة
+        "السبت": []  // يوم عطلة
+    };
+
+    // القائمة الكاملة للمواد للرجوع إليها في أيام الإجازة
+    const MASTER_SUBJECT_LIST = ["رياضيات", "احياء", "انجليزي", "كيمياء", "توحيد", "فنون", "تقنيه رقميه"];
+    
+    // كلمة السر المطلوبة للتعديل
+    const PROTECTION_KEY = "9561";
+    
+    // بادئة حفظ البيانات في الذاكرة لعدم التداخل
+    const STORAGE_PREFIX = "school_";
+
+    let currentISODate = "";
+    let currentDayOfWeek = "";
+    let systemLocalStorageAvailable = true;
+
+    // تشغيل النظام فور تحميل الصفحة
+    window.addEventListener('DOMContentLoaded', () => {
+        verifyLocalStorageIntegrity();
+        initializeDateTracking();
+        renderSubjectGridStructure();
+        loadPersistedInputValues();
+        generateAutomatedSummary();
+    });
+
+    // التحقق من دعم المتصفح للذاكرة المحلية
+    function verifyLocalStorageIntegrity() {
+        try {
+            const testKey = '__storage_test__';
+            localStorage.setItem(testKey, testKey);
+            localStorage.removeItem(testKey);
+        } catch (e) {
+            systemLocalStorageAvailable = false;
+            document.getElementById('storage-warning-msg').style.display = 'block';
+        }
+    }
+
+    // جلب وحساب الوقت والتاريخ الحالي باللغة العربية
+    function initializeDateTracking() {
+        const localTimeInstance = new Date();
+        
+        // تحديد اسم اليوم باللغة العربية
+        const localizedDaysArray = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+        currentDayOfWeek = localizedDaysArray[localTimeInstance.getDay()];
+        
+        // إنشاء صيغة الـ ISO الثابتة للتخزين (YYYY-MM-DD)
+        const calendarYear = localTimeInstance.getFullYear();
+        const calendarMonth = String(localTimeInstance.getMonth() + 1).padStart(2, '0');
+        const calendarDay = String(localTimeInstance.getDate()).padStart(2, '0');
+        currentISODate = `${calendarYear}-${calendarMonth}-${calendarDay}`;
+
+        // عرض التاريخ بشكل كامل وواضح للمستخدم
+        const systemLocalizationOptions = { month: 'long', day: 'numeric', year: 'numeric' };
+        const readableFormatString = localTimeInstance.toLocaleDateString('ar-SA', systemLocalizationOptions);
+
+        document.getElementById('current-date-display').innerText = `${currentDayOfWeek}، ${readableFormatString}`;
+    }
+
+    // إنشاء الكروت وإعادة ترتيبها ديناميكياً حسب اليوم
+    function renderSubjectGridStructure() {
+        const gridRootElement = document.getElementById('subjects-display-grid');
+        gridRootElement.innerHTML = '';
+
+        const todaysScheduledSubjects = WEEKLY_SCHEDULE_MAP[currentDayOfWeek] || [];
+        let finalProcessingOrder = [];
+
+        // إذا كان اليوم يحتوي على مواد، نعرضها بترتيبها، وإلا نعرض الترتيب الكامل الافتراضي
+        if (todaysScheduledSubjects.length > 0) {
+            finalProcessingOrder = [...todaysScheduledSubjects];
+            
+            // إضافة باقي المواد غير المجدولة في نهاية الصفحة لضمان عرض كل الأقسام دائماً
+            MASTER_SUBJECT_LIST.forEach(sub => {
+                if (!finalProcessingOrder.includes(sub)) {
+                    finalProcessingOrder.push(sub);
+                }
+            });
+        } else {
+            // ترتيب افتراضي في أيام الإجازات (ترتيب يوم الأحد كمثال أساسي)
+            finalProcessingOrder = [...MASTER_SUBJECT_LIST];
+        }
+
+        finalProcessingOrder.forEach(subjectName => {
+            const isCurrentlyScheduled = todaysScheduledSubjects.includes(subjectName);
+            const generatedCardElement = buildSubjectComponentMarkup(subjectName, isCurrentlyScheduled);
+            gridRootElement.appendChild(generatedCardElement);
+        });
+    }
+
+    // بناء الهيكل الداخلي لكل مادة مع دعم الروابط في خانة الملخصات
+    function buildSubjectComponentMarkup(name, isScheduled) {
+        const cardContainerElement = document.createElement('article');
+        cardContainerElement.className = `subject-card ${isScheduled ? 'scheduled' : 'not-scheduled'}`;
+        cardContainerElement.dataset.subjectName = name;
+
+        const scheduledBadgeMarkup = isScheduled 
+            ? `<span class="badge badge-scheduled">مجدولة اليوم</span>`
+            : `<span class="badge badge-not-scheduled">غير مجدولة اليوم</span>`;
+
+        cardContainerElement.innerHTML = `
+            <div class="subject-header">
+                <span class="subject-title">${name}</span>
+                ${scheduledBadgeMarkup}
+            </div>
+            <div class="field-group">
+                <label class="field-label" for="input-${name}-assignments">الواجبات</label>
+                <textarea id="input-${name}-assignments" class="field-input" data-field-type="assignments" disabled placeholder="لا توجد واجبات مسجلة."></textarea>
+            </div>
+            <div class="field-group">
+                <label class="field-label" for="input-${name}-projects">المشاريع</label>
+                <textarea id="input-${name}-projects" class="field-input" data-field-type="projects" disabled placeholder="لا توجد مشاريع مسجلة."></textarea>
+            </div>
+            <div class="field-group">
+                <label class="field-label" for="input-${name}-summaries">الملخصات (يمكن لصق روابط الصور أو الـ PDF هنا)</label>
+                <textarea id="input-${name}-summaries" class="field-input" data-field-type="summaries" disabled placeholder="لا توجد ملخصات متوفرة."></textarea>
+                <div id="link-preview-${name}" class="link-preview-container"></div>
+            </div>
+        `;
+        return cardContainerElement;
+    }
+
+    // جلب البيانات المخزنة مسبقاً وتوزيعها على الخانات وتحويل روابط الملخصات
+    function loadPersistedInputValues() {
+        if (!systemLocalStorageAvailable) return;
+
+        const operationalTextareas = document.querySelectorAll('.field-input');
+        operationalTextareas.forEach(textareaNode => {
+            const linkedSubject = textareaNode.closest('.subject-card').dataset.subjectName;
+            const targetDataType = textareaNode.dataset.fieldType;
+            const absoluteStorageKey = `${STORAGE_PREFIX}${currentISODate}_${linkedSubject}_${targetDataType}`;
+            
+            const retrievedValue = localStorage.getItem(absoluteStorageKey);
+            if (retrievedValue !== null) {
+                textareaNode.value = retrievedValue;
+            }
+        });
+
+        // تشغيل فحص الروابط للملخصات لتظهر كأزرار قابلة للنقر
+        updateSummariesLinks();
+    }
+
+    // دالة فحص وتوليد أزرار الروابط للملخصات المرفوعة سحابياً
+    function updateSummariesLinks() {
+        MASTER_SUBJECT_LIST.forEach(subjectName => {
+            const targetInput = document.getElementById(`input-${subjectName}-summaries`);
+            const previewContainer = document.getElementById(`link-preview-${subjectName}`);
+            
+            if (targetInput && previewContainer) {
+                const value = targetInput.value.trim();
+                // إذا كان النص المدخل يبدأ بـ http، يتم تحويله تلقائياً لرابط خارجي زرقاء
+                if (value.startsWith('http://') || value.startsWith('https://')) {
+                    previewContainer.innerHTML = `<a href="${value}" target="_blank">🔗 فتح ملف الملخص المرفق (PDF/صورة)</a>`;
+                } else {
+                    previewContainer.innerHTML = '';
+                }
+            }
+        });
+    }
+
+    // توليد الموجز التلقائي بناءً على خانات الواجبات فقط بترتيب جدول اليوم
+    function generateAutomatedSummary() {
+        const displayDestination = document.getElementById('summary-view');
+        const processingClassesList = WEEKLY_SCHEDULE_MAP[currentDayOfWeek] || [];
+
+        if (processingClassesList.length === 0) {
+            displayDestination.innerHTML = `<strong>لا توجد مواد مجدولة اليوم (عطلة نهاية الأسبوع).</strong>`;
+            return;
+        }
+
+        let summaryCompiledHTML = `<p>واجبات اليوم مرتبة بدقة حسب الجدول الدراسي:</p><ol class="summary-list">`;
+
+        processingClassesList.forEach(subjectName => {
+            const targetedInputId = `input-${subjectName}-assignments`;
+            const resolvingDomElement = document.getElementById(targetedInputId);
+            let inputCleanedString = resolvingDomElement ? resolvingDomElement.value.trim() : "";
+
+            if (!inputCleanedString) {
+                inputCleanedString = `<em>(لم يتم إدخال واجب)</em>`;
+            }
+
+            summaryCompiledHTML += `<li><strong>${subjectName}</strong> — ${inputCleanedString}</li>`;
+        });
+
+        summaryCompiledHTML += `</ol>`;
+        displayDestination.innerHTML = summaryCompiledHTML;
+    }
+
+    // فتح نافذة طلب الرقم السري
+    function openPasswordModal() {
+        if (document.body.classList.contains('edit-mode')) {
+            terminateEditSessionMode();
+            return;
+        }
+        
+        const runtimeOverlayTarget = document.getElementById('password-modal-overlay');
+        const inputPasswordField = document.getElementById('admin-password-input');
+        const targetedTxtErrorNode = document.getElementById('modal-error-txt');
+        
+        targetedTxtErrorNode.style.display = 'none';
+        inputPasswordField.value = '';
+        runtimeOverlayTarget.classList.add('active');
+        
+        setTimeout(() => {
+            inputPasswordField.focus();
+        }, 50);
+    }
+
+    function closePasswordModal() {
+        document.getElementById('password-modal-overlay').classList.remove('active');
+    }
+
+    function closePasswordModalViaOverlay(event) {
+        if (event.target.id === 'password-modal-overlay') {
+            closePasswordModal();
+        }
+    }
+
+    function handleModalKeyDown(event) {
+        if (event.key === 'Enter') {
+            submitPasswordVerification();
+        } else if (event.key === 'Escape') {
+            closePasswordModal();
+        }
+    }
+
+    // التحقق من الرقم السري وتفعيل وضع التعديل
+    function submitPasswordVerification() {
+        const inputCaptureValue = document.getElementById('admin-password-input').value;
+        const targetErrorElement = document.getElementById('modal-error-txt');
+
+        if (inputCaptureValue === PROTECTION_KEY) {
+            closePasswordModal();
+            initializeActiveEditingEnvironment();
+        } else {
+            targetErrorElement.style.display = 'block';
+            document.getElementById('admin-password-input').focus();
+        }
+    }
+
+    function initializeActiveEditingEnvironment() {
+        document.body.classList.add('edit-mode');
+        
+        const controlActivationButton = document.getElementById('enter-edit-btn');
+        controlActivationButton.innerText = "🔒 قفل النظام";
+        controlActivationButton.className = "btn btn-secondary";
+
+        const inputFieldsList = document.querySelectorAll('.field-input');
+        inputFieldsList.forEach(field => {
+            field.removeAttribute('disabled');
+        });
+    }
+
+    function terminateEditSessionMode() {
+        document.body.classList.remove('edit-mode');
+        
+        const globalAccessControlBtn = document.getElementById('enter-edit-btn');
+        globalAccessControlBtn.innerText = "🔒 تفعيل التعديل";
+        globalAccessControlBtn.className = "btn btn-primary";
+
+        const functionalInputsCollection = document.querySelectorAll('.field-input');
+        functionalInputsCollection.forEach(field => {
+            field.setAttribute('disabled', 'true');
+        });
+    }
+
+    // حفظ التعديلات وإعادة بناء الموجز وتحديث روابط الملفات
+    function saveAllEdits() {
+        if (systemLocalStorageAvailable) {
+            const datasetInputs = document.querySelectorAll('.field-input');
+            datasetInputs.forEach(inputNode => {
+                const associatedSubject = inputNode.closest('.subject-card').dataset.subjectName;
+                const selectedContextType = inputNode.dataset.fieldType;
+                const explicitWriteKey = `${STORAGE_PREFIX}${currentISODate}_${associatedSubject}_${selectedContextType}`;
+                
+                localStorage.setItem(explicitWriteKey, inputNode.value.trim());
+            });
+        }
+        
+        terminateEditSessionMode();
+        generateAutomatedSummary();
+        updateSummariesLinks();
+    }
+
+    // إلغاء التعديلات دون حفظ
+    function cancelEditing() {
+        loadPersistedInputValues();
+        terminateEditSessionMode();
+    }
+
+    // مسح كافة مدخلات اليوم الحالي فقط من الذاكرة
+    function clearCurrentDateData() {
+        if (!confirm("هل أنت متأكد تماماً من رغبتك في مسح كافة بيانات هذا اليوم؟")) {
+            return;
+        }
+
+        const dataEntryElements = document.querySelectorAll('.field-input');
+        dataEntryElements.forEach(inputArea => {
+            inputArea.value = '';
+            
+            if (systemLocalStorageAvailable) {
+                const targetingSubject = inputArea.closest('.subject-card').dataset.subjectName;
+                const cleaningFieldRef = inputArea.dataset.fieldType;
+                const directPurgeTargetKey = `${STORAGE_PREFIX}${currentISODate}_${targetingSubject}_${cleaningFieldRef}`;
+                localStorage.removeItem(directPurgeTargetKey);
+            }
+        });
+
+        terminateEditSessionMode();
+        generateAutomatedSummary();
+        updateSummariesLinks();
+    }
+</script>
+
+</body>
+</html>
