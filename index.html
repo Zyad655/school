@@ -29,7 +29,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow-x: hidden; /* يمنع ظهور شريط التمرير الأفقي المزعج في الجوال */
+            overflow-x: hidden;
         }
 
         .top-meta-bar {
@@ -78,11 +78,11 @@
         .platform-navigation {
             background-color: white; display: flex; padding: 0 15px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); position: sticky; top: 0; z-index: 50;
-            overflow-x: auto; /* يسمح بسحب الأقسام يميناً ويساراً في الجوال */
+            overflow-x: auto;
             -webkit-overflow-scrolling: touch;
         }
 
-        .platform-navigation::-webkit-scrollbar { display: none; } /* إخفاء شريط التمرير لشكل أجمل */
+        .platform-navigation::-webkit-scrollbar { display: none; }
 
         .nav-link-tab {
             padding: 15px 16px; font-weight: 700; color: var(--text-muted); cursor: pointer;
@@ -145,18 +145,19 @@
             display: flex; align-items: flex-start; gap: 10px; color: #92400e; font-size: 0.95rem; line-height: 1.5;
         }
 
+        /* حماية وتثبيت لون الدبّوس الرمادي ومنع تحوله للون أحمر في الهواتف */
         .gray-pin-icon { 
             color: #475569 !important; 
-            font-family: "Segoe UI Symbol", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
-            font-variant-numeric: tabular-nums;
-            font-weight: normal; 
-            font-style: normal; 
+            font-family: "Segoe UI Symbol", "Apple Color Emoji", "Noto Color Emoji", sans-serif !important;
+            font-weight: normal !important; 
+            font-style: normal !important; 
             font-size: 1.1rem; 
             display: inline-flex;
             align-items: center;
             justify-content: center;
             margin-left: 6px;
-            text-shadow: 0 0 0 #475569;
+            text-shadow: 0 0 0 #475569 !important;
+            -webkit-text-fill-color: #475569 !important;
         }
 
         .content-card-panel {
@@ -214,7 +215,7 @@
         }
         .draggable-subject-card.unscheduled-card { background-color: #64748b; color: white; border-color: #475569; }
 
-        .schedule-day-row-config { background: white; padding: 12px; border-radius: 8px; border: 1px solid var(--card-border); margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; min-width: 600px; /* يحافظ على قوام الجدول عند التعديل */ }
+        .schedule-day-row-config { background: white; padding: 12px; border-radius: 8px; border: 1px solid var(--card-border); margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; min-width: 600px; }
         .schedule-day-title-label { font-weight: 800; color: var(--main-dark-blue); font-size: 0.95rem; }
         .periods-inputs-row-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; width: 100%; }
         
@@ -246,8 +247,6 @@
         .btn-action { padding: 8px 18px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
         .btn-save { background-color: #10b981; color: white; }
         .btn-cancel { background-color: #64748b; color: white; }
-        .btn-delete-all { background-color: #ef4444; color: white; margin-left: auto; }
-        body.admin-full .btn-delete-all { display: inline-block; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.6); display: flex; justify-content: center; align-items: center; z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.2s; padding: 20px; }
         .modal-overlay.show { opacity: 1; pointer-events: auto; }
@@ -257,9 +256,6 @@
         .platform-footer { background-color: #0f172a; color: #94a3b8; text-align: center; padding: 20px; font-size: 0.85rem; border-top: 1px solid #1e293b; line-height: 1.6; }
         .platform-footer span { color: var(--accent-gold); font-weight: 700; }
 
-        /* ========================================================
-           شاشات الجوال والأجهزة الذكية المتجاوبة (Responsive Design)
-           ======================================================== */
         @media (max-width: 768px) {
             .top-meta-bar { justify-content: center; text-align: center; font-size: 0.75rem; }
             .brand-text-titles h1 { font-size: 1.3rem; }
@@ -269,11 +265,10 @@
             .btn-top-admin-trigger { width: 100%; }
             .summary-row-item { flex-direction: column; align-items: flex-start; gap: 10px; }
             .summary-right-side { width: 100%; }
-            .schedule-cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); } /* تقسيم الحصص لعمودين مريحة بالجوال */
+            .schedule-cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); } 
             .mini-schedule-card { max-width: 100%; }
             .btn-action { flex: 1; text-align: center; font-size: 0.85rem; padding: 10px; }
             .admin-sticky-footer { justify-content: center; gap: 6px; padding: 10px; }
-            .btn-delete-all { margin-left: 0; width: 100%; order: 3; } /* إنزال زر الحذف ليكون مريحاً */
         }
     </style>
 </head>
@@ -350,7 +345,6 @@
 </main>
 
 <footer class="admin-sticky-footer">
-    <button class="btn-action btn-delete-all" onclick="clearTodayCloudContent()">مسح بيانات اليوم</button>
     <button class="btn-action btn-cancel" onclick="cancelEditingSession()">إلغاء</button>
     <button class="btn-action btn-save" onclick="saveEditsToCloud()">حفظ التعديلات</button>
 </footer>
@@ -870,11 +864,6 @@
     }
 
     function cancelEditingSession() { loadMasterData(); deactivateEditMode(); }
-
-    function clearTodayCloudContent() {
-        if(!confirm("هل أنت متأكد من مسح واجبات وملخصات اليوم؟")) return;
-        fetch(`${FIREBASE_DB_URL}/${todayISODate}.json`, { method: 'DELETE' }).then(() => { deactivateEditMode(); loadMasterData(); });
-    }
 </script>
 
 </body>
