@@ -3,760 +3,847 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة المتابعة الدراسية</title>
+    <title>بوابة المدرسة التعليمية - منصة متابعة الواجبات والمشاريع</title>
     <style>
         :root {
-            --bg-color: #E8EDF2;       /* الخلفية الثلجية الناعمة */
-            --primary-dark: #2C3947;   /* الكحلي الداكن المعتمد */
-            --accent-blue: #547A95;    /* الأزرق الهادئ */
-            --gold-accent: #C2A56D;    /* الذهبي الفخم للأزرار والحدود */
-            --card-bg: #FFFFFF;        
-            --muted-gray: #7f8c8d;
-            --disabled-bg: #bdc3c7;
+            --main-dark-blue: #0d2c54;     
+            --gradient-blue: linear-gradient(135deg, #0d2c54 0%, #1a477c 100%);
+            --accent-gold: #cca43b;        
+            --bg-light: #f4f7fa;           
+            --card-border: #e2e8f0;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --dark-gray-pin: #475569; 
         }
 
         * {
-            box-shadow: none;
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--primary-dark);
-            padding: 30px 20px;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
         }
 
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            width: 100%;
-            flex: 1;
-        }
-
-        .top-date-bar {
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--primary-dark);
-            margin-bottom: 10px;
-            text-align: right;
-            padding-right: 5px;
-        }
-
-        .main-header-box {
-            background-color: transparent;
-            border: 3px solid var(--primary-dark);
-            border-radius: 25px;
-            padding: 20px;
-            text-align: center;
-            max-width: 420px;
-            margin: 0 auto 30px auto;
-            background-color: #f4f7f9;
-        }
-
-        .main-header-box h1 {
-            font-size: 2rem;
-            color: var(--primary-dark);
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-
-        .nav-sections-bar {
+        .top-meta-bar {
+            background-color: #081d37;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 8px 40px;
             display: flex;
-            background-color: var(--primary-dark);
-            border-radius: 10px;
-            margin-bottom: 25px;
-            overflow: hidden;
-            border-bottom: 4px solid var(--gold-accent);
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 600;
         }
 
-        .nav-item {
-            flex: 1;
-            text-align: center;
-            padding: 15px 10px;
-            font-weight: 700;
-            color: #ffffff;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 1.05rem;
-            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        .platform-header {
+            background: var(--gradient-blue);
+            padding: 35px 50px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 5px solid var(--accent-gold);
         }
 
-        .nav-item:last-child {
-            border-left: none;
+        .header-brand-wrapper { display: flex; align-items: center; gap: 20px; }
+        .brand-logo-circle {
+            width: 75px; height: 75px; background-color: rgba(255, 255, 255, 0.1);
+            border: 3px solid var(--accent-gold); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; font-weight: 900; color: var(--accent-gold);
         }
 
-        .nav-item.scheduled-item:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+        .brand-text-titles h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 4px; }
+        .brand-text-titles p { font-size: 0.95rem; color: #cbd5e1; }
+
+        .btn-top-admin-trigger {
+            background-color: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white; padding: 8px 24px; border-radius: 6px; font-weight: 600; font-size: 0.9rem;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .btn-top-admin-trigger:hover { background-color: white; color: var(--main-dark-blue); }
+
+        .platform-navigation {
+            background-color: white; display: flex; padding: 0 40px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); position: sticky; top: 0; z-index: 50;
+            overflow-x: auto;
         }
 
-        .nav-item.not-scheduled-item {
-            background-color: #344454;
-            color: rgba(255, 255, 255, 0.4);
+        .nav-link-tab {
+            padding: 18px 22px; font-weight: 700; color: var(--text-muted); cursor: pointer;
+            font-size: 1rem; display: flex; align-items: center; gap: 6px; border-bottom: 3px solid transparent; white-space: nowrap;
+        }
+        .nav-link-tab:hover { color: var(--main-dark-blue); background-color: #f8fafc; }
+        .nav-link-tab.active-tab { color: var(--main-dark-blue); border-bottom-color: var(--main-dark-blue); background-color: #f1f5f9; }
+        .nav-link-tab .active-dot { width: 7px; height: 7px; background-color: var(--accent-gold); border-radius: 50%; display: inline-block; }
+        
+        /* تنسيق المواد الغير مجدولة في شريط الأقسام العلوي بلون رمادي فاتح */
+        .nav-link-tab.unscheduled-tab {
+            color: #94a3b8;
+            background-color: #fafafa;
             font-weight: 500;
         }
-        .nav-item.not-scheduled-item:hover {
-            background-color: #3a4d5f;
+        .nav-link-tab.unscheduled-tab:hover {
+            color: #64748b;
+            background-color: #f1f5f9;
         }
 
-        .nav-item.active {
-            background-color: var(--gold-accent) !important;
-            color: var(--primary-dark) !important;
-        }
-
-        .control-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .sync-badge {
-            background-color: #ffffff;
-            border: 1px solid #ced4da;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--primary-dark);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-edit-toggle {
-            background-color: var(--accent-blue);
+        .announcement-banner-bar {
+            background-color: var(--dark-gray-pin);
             color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .display-main-card {
-            background-color: var(--card-bg);
-            border-radius: 15px;
-            padding: 30px;
-            border-right: 5px solid var(--gold-accent);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            margin-bottom: 25px;
-            position: relative;
-        }
-
-        .card-header-title {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: var(--primary-dark);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .view-pane { display: none; }
-        .view-pane.active-pane { display: block !important; }
-
-        .summary-list {
-            list-style: none;
-            margin-top: 15px;
-        }
-
-        .summary-list li {
-            font-size: 1.15rem;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px dashed #e9ecef;
-            line-height: 1.8;
-        }
-        .summary-list li:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-
-        .summary-subject-row {
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .summary-note-block {
-            display: inline-block;
-            background-color: #FFF9E6; 
-            color: #B38600; 
-            padding: 4px 12px; 
-            border-radius: 6px; 
-            font-size: 0.95rem; 
-            border: 1px solid #FFE699; 
-            font-weight: 600;
-            margin-top: 6px;
-            margin-right: 25px;
-            line-height: 1.5;
-            max-width: 90%;
-        }
-
-        .pinned-badge-ui {
-            background-color: #e74c3c;
-            color: white;
-            font-size: 0.75rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-left: 5px;
-            font-weight: 700;
-            display: inline-block;
-            vertical-align: middle;
-        }
-
-        .subject-field-box {
-            margin-bottom: 20px;
-        }
-
-        .field-title {
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: var(--accent-blue);
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 6px;
-        }
-
-        .btn-pin-toggle {
-            display: none;
-            background-color: #f0f2f5;
-            border: 1px solid #ccc;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            font-family: inherit;
-            font-weight: 600;
-            color: #555;
-            transition: all 0.2s;
-        }
-        body.edit-mode .btn-pin-toggle { display: inline-block; }
-        .btn-pin-toggle.is-pinned {
-            background-color: #e74c3c;
-            color: white;
-            border-color: #c0392b;
-        }
-
-        .text-data-view {
+            padding: 12px 40px;
             font-size: 1rem;
-            color: var(--primary-dark);
-            padding-right: 5px;
-            min-height: 24px;
+            font-weight: 600;
+            display: none; 
+            align-items: center;
+            gap: 15px;
+            box-shadow: inset 0 -2px 5px rgba(0,0,0,0.1);
         }
-
-        .field-textarea {
+        .announcement-banner-bar.has-content { display: flex; }
+        body.edit-mode.admin-full .announcement-banner-bar { display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
+        
+        .announcement-input-field {
             width: 100%;
-            min-height: 60px;
-            padding: 10px;
-            border: 1px solid var(--accent-blue);
-            border-radius: 6px;
-            font-family: inherit;
-            font-size: 1rem;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-size: 0.95rem;
             display: none;
-            margin-top: 5px;
-            resize: vertical;
+        }
+        body.edit-mode.admin-full .announcement-input-field { display: block; }
+        body.edit-mode.admin-full .announcement-display-text { display: none; }
+
+        .main-content-container {
+            max-width: 1300px; margin: 30px auto; width: 100%; padding: 0 20px; flex: 1;
         }
 
-        body.edit-mode .field-textarea { display: block; }
-        body.edit-mode .text-data-view { display: none; }
+        .schedule-status-tag {
+            background-color: #e0f2fe; color: #0369a1; padding: 8px 16px; border-radius: 6px;
+            font-weight: 700; font-size: 0.9rem; display: inline-flex; align-items: center; margin-bottom: 20px; border: 1px solid #bae6fd;
+        }
 
-        .btn-attachment {
+        .outside-pinned-notes-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 15px; margin-bottom: 25px;
+        }
+
+        .pinned-note-box-item {
+            background-color: #fef3c7; border: 1px solid #fde68a; border-radius: 8px; padding: 18px;
+            display: flex; align-items: flex-start; gap: 12px; color: #92400e; font-size: 1.05rem; line-height: 1.5;
+        }
+
+        .gray-pin-icon { 
+            color: #475569 !important; 
+            font-family: "Segoe UI Symbol", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+            font-variant-numeric: tabular-nums;
+            font-weight: normal; 
+            font-style: normal; 
+            font-size: 1.15rem; 
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            background-color: var(--accent-blue);
-            color: white !important;
-            text-decoration: none !important;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            margin-top: 8px;
-            transition: background-color 0.2s;
-        }
-        .btn-attachment:hover { background-color: var(--primary-dark); }
-
-        .day-status-badge {
-            font-size: 0.8rem;
-            background-color: var(--gold-accent);
-            color: var(--primary-dark);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-weight: 700;
+            justify-content: center;
+            margin-left: 6px;
+            text-shadow: 0 0 0 #475569;
         }
 
-        .admin-action-footer {
-            display: none;
-            justify-content: flex-end;
-            gap: 12px;
-            background-color: var(--card-bg);
-            padding: 15px 25px;
-            border-radius: 12px;
-            border: 2px solid var(--accent-blue);
-            margin-top: 20px;
+        .content-card-panel {
+            background: white; border-radius: 12px; border: 1px solid var(--card-border); padding: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); margin-bottom: 30px;
         }
-        body.edit-mode .admin-action-footer { display: flex; position: sticky; bottom: 20px; z-index: 10; }
 
-        .btn {
-            padding: 10px 20px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; font-size: 0.95rem;
+        .panel-main-title {
+            font-size: 1.5rem; font-weight: 800; color: var(--main-dark-blue); margin-bottom: 25px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;
         }
-        .btn-success { background-color: #2ecc71; color: white; }
-        .btn-secondary { background-color: #95a5a6; color: white; }
-        .btn-danger { background-color: #e74c3c; color: white; }
 
-        .modal-mask {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(44, 57, 71, 0.5); display: flex; justify-content: center; align-items: center;
-            z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.2s;
-        }
-        .modal-mask.show { opacity: 1; pointer-events: auto; }
-        .modal-box { background-color: white; padding: 25px; border-radius: 12px; width: 100%; max-width: 380px; text-align: center; border: 2px solid var(--gold-accent); }
-        .modal-box input { width: 100%; padding: 10px; border: 1px solid var(--accent-blue); border-radius: 6px; text-align: center; margin: 15px 0; font-size: 1rem; }
+        .view-pane-segment { display: none; }
+        .view-pane-segment.active-pane { display: block; }
 
-        .footer-credits-bar {
-            text-align: center;
-            padding: 20px;
-            margin-top: 50px;
-            background-color: var(--primary-dark);
-            color: #ffffff;
-            border-top: 4px solid var(--gold-accent);
-            font-size: 0.95rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
+        .summary-rows-stack { display: flex; flex-direction: column; gap: 15px; margin-bottom: 35px; }
+        .summary-row-item {
+            background-color: white; border: 1px solid var(--card-border); border-radius: 10px; padding: 20px; display: flex; align-items: center; justify-content: space-between;
         }
-        .footer-credits-bar span {
-            color: var(--gold-accent);
-            font-weight: 700;
+
+        .summary-right-side { display: flex; align-items: center; gap: 20px; flex: 1; }
+        .summary-index-circle {
+            width: 36px; height: 36px; background-color: var(--main-dark-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;
         }
+
+        .summary-subject-badge { font-size: 1.1rem; font-weight: 800; color: var(--main-dark-blue); min-width: 100px; }
+        .summary-details-text { font-size: 1.05rem; color: var(--text-dark); line-height: 1.6; }
+        .summary-empty-text { color: #94a3b8; font-style: italic; }
+
+        .daily-schedule-section-title { font-size: 1.25rem; font-weight: 800; color: var(--main-dark-blue); margin-bottom: 15px; }
+        .schedule-cards-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+
+        .mini-schedule-card {
+            background-color: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; padding: 12px 20px; display: flex; align-items: center; gap: 12px; min-width: 160px; flex: 1; max-width: 240px;
+        }
+
+        .mini-card-num {
+            background-color: #e2e8f0; color: var(--main-dark-blue); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem;
+        }
+        .mini-card-name { font-size: 0.95rem; font-weight: 700; color: var(--text-dark); }
+
+        .btn-toggle-schedule-panel {
+            display: none; background-color: var(--main-dark-blue); color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: 700; cursor: pointer; margin-top: 20px; font-size: 0.95rem; width: 100%; text-align: center;
+        }
+        body.edit-mode.admin-full .btn-toggle-schedule-panel { display: block; }
+
+        .admin-schedule-manager-panel {
+            display: none; background-color: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 12px; padding: 25px; margin-top: 15px;
+        }
+        .admin-schedule-manager-panel.open-panel { display: block; }
+
+        .subjects-bank-palette { background: #f1f5f9; padding: 15px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #e2e8f0; }
+        .palette-title { font-size: 0.95rem; font-weight: 800; color: #475569; margin-bottom: 10px; }
+        .draggable-items-pool { display: flex; flex-wrap: wrap; gap: 10px; }
+        
+        .draggable-subject-card {
+            background-color: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px 16px; font-weight: 700; font-size: 0.9rem; color: var(--main-dark-blue); cursor: grab; user-select: none; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .draggable-subject-card.unscheduled-card { background-color: #64748b; color: white; border-color: #475569; }
+
+        .schedule-day-row-config { background: white; padding: 15px; border-radius: 8px; border: 1px solid var(--card-border); margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
+        .schedule-day-title-label { font-weight: 800; color: var(--main-dark-blue); font-size: 1.05rem; }
+        .periods-inputs-row-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; width: 100%; }
+        
+        .period-dropzone-cell {
+            background-color: #f8fafc; border: 2px dashed #e2e8f0; border-radius: 6px; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; min-height: 80px; justify-content: center;
+        }
+        .period-dropzone-cell.drag-hover { background-color: #e0f2fe; border-color: #38bdf8; }
+        .period-dropzone-cell label { font-size: 0.8rem; color: var(--text-muted); font-weight: 700; }
+        
+        .dropped-current-value { background-color: #e2e8f0; color: var(--main-dark-blue); font-weight: 700; font-size: 0.9rem; padding: 6px 12px; border-radius: 4px; width: 100%; text-align: center; border: 1px solid #cbd5e1; }
+        .dropped-current-value.val-empty { background-color: #f1f5f9; color: #94a3b8; border-style: dashed; font-weight: normal; }
+
+        .subject-block-field { margin-bottom: 25px; }
+        .field-label-text { font-size: 1rem; font-weight: 700; color: #475569; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+
+        .btn-pin-action { display: none; background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; font-weight: 600; }
+        body.edit-mode .btn-pin-action { display: inline-block; }
+        .btn-pin-action.pinned-active { background-color: #cbd5e1; color: var(--text-dark); border-color: #94a3b8; }
+
+        .data-text-viewer { font-size: 1.05rem; color: var(--text-dark); background-color: #f8fafc; padding: 12px 16px; border-radius: 8px; border: 1px solid #e2e8f0; min-height: 48px; line-height: 1.6; }
+        
+        .input-editor-textarea, .input-editor-text { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1rem; font-family: inherit; display: none; margin-top: 4px; resize: vertical; }
+
+        .btn-url-downloader { display: inline-flex; align-items: center; gap: 8px; background-color: #0284c7; color: white !important; text-decoration: none !important; padding: 10px 20px; border-radius: 6px; font-weight: 700; font-size: 0.95rem; }
+
+        .admin-sticky-footer { display: none; justify-content: flex-end; gap: 12px; background-color: white; padding: 15px 30px; border-top: 3px solid var(--main-dark-blue); position: sticky; bottom: 0; z-index: 90; }
+        body.edit-mode .admin-sticky-footer { display: flex; }
+
+        .btn-action { padding: 10px 24px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; font-size: 0.95rem; }
+        .btn-save { background-color: #10b981; color: white; }
+        .btn-cancel { background-color: #64748b; color: white; }
+        .btn-delete-all { background-color: #ef4444; color: white; margin-left: auto; display: none; }
+        body.admin-full .btn-delete-all { display: inline-block; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.6); display: flex; justify-content: center; align-items: center; z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+        .modal-window { background-color: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; text-align: center; }
+        .modal-window input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; text-align: center; margin: 20px 0; font-size: 1.1rem; }
+
+        .platform-footer { background-color: #0f172a; color: #94a3b8; text-align: center; padding: 25px; font-size: 0.9rem; border-top: 1px solid #1e293b; }
+        .platform-footer span { color: var(--accent-gold); font-weight: 700; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="top-date-bar" id="live-date-text">جاري تحميل التاريخ...</div>
-
-    <header class="main-header-box">
-        <h1>لوحة المتابعة الدراسية</h1>
-    </header>
-
-    <nav class="nav-sections-bar" id="navigation-root-bar"></nav>
-
-    <div class="control-row">
-        <div class="sync-badge">
-            <span style="color: #2ecc71;">●</span> التزامن السحابي: متصل ومؤمن
-        </div>
-        <button id="toggle-edit-mode-btn" class="btn-edit-toggle" onclick="promptPasswordVerification()">🔧 تفعيل التعديل</button>
-    </div>
-
-    <main class="display-main-card">
-        
-        <div id="view-pane-home" class="view-pane active-pane">
-            <div class="card-header-title">📋 الموجز الدراسي اليومي</div>
-            <div id="dynamic-summary-target">جاري مزامنة المدخلات الدراسية الحالية...</div>
-        </div>
-
-        <div id="subject-cards-dynamic-container"></div>
-
-    </main>
-
-    <footer class="admin-action-footer">
-        <button class="btn btn-danger" onclick="wipeTodayCloudData()" style="margin-left: auto;">🗑️ مسح بيانات اليوم</button>
-        <button class="btn btn-secondary" onclick="abortEditingSession()" style="margin-right: 8px;">✖ إلغاء</button>
-        <button class="btn btn-success" onclick="commitEditsToCloud()">💾 حفظ التعديلات سحابياً</button>
-    </footer>
+<div class="top-meta-bar">
+    <div class="academic-year">العام الدراسي: 2025 / 2026</div>
+    <div class="current-date" id="live-date-header">جاري تحميل التاريخ...</div>
 </div>
 
-<footer class="footer-credits-bar">
-    جميع الحقوق محفوظة © لوحة المتابعة الدراسية الذكية | تم التطوير بواسطة <span>zyad ashry</span>
+<header class="platform-header">
+    <div class="header-brand-wrapper">
+        <div class="brand-logo-circle">م</div>
+        <div class="brand-text-titles">
+            <h1>بوابة المدرسة التعليمية</h1>
+            <p>منصة متابعة الواجبات والمشاريع والملخصات لجميع المواد الدراسية</p>
+        </div>
+    </div>
+    <button id="admin-trigger-btn" class="btn-top-admin-trigger" onclick="openAuthModal()">تعديل</button>
+</header>
+
+<nav class="platform-navigation" id="navigation-root-tabs"></nav>
+
+<div class="announcement-banner-bar" id="global-announcement-bar">
+    <div class="announcement-display-text" id="announcement-text-view">📢 لا توجد مستجدات معلنة حالياً.</div>
+    <input type="text" class="announcement-input-field" id="announcement-text-input" placeholder="اكتب هنا الإعلان العام الذي تريد توجيهه للمستخدمين...">
+</div>
+
+<main class="main-content-container">
+    
+    <div class="schedule-status-tag" id="day-status-tag">📋 جدول اليوم نشط</div>
+
+    <div id="top-pinned-notes-grid" class="outside-pinned-notes-grid"></div>
+
+    <div class="content-card-panel">
+        
+        <div id="view-pane-home" class="view-pane-segment active-pane">
+            
+            <div class="panel-main-title">الموجز الدراسي اليومي</div>
+            
+            <div id="summary-cards-stack-target" class="summary-rows-stack">
+                جاري مزامنة محتويات المنصة الدراسية...
+            </div>
+
+            <div class="daily-schedule-section-title">الجدول الدراسي لليوم</div>
+            <div id="daily-schedule-cards-grid" class="schedule-cards-grid"></div>
+
+            <button class="btn-toggle-schedule-panel" onclick="toggleSchedulePanel()">⚙️ تعديل ترتيب جدول الحصص الأسبوعي</button>
+
+            <div class="admin-schedule-manager-panel" id="schedule-manager-drawer">
+                <div class="subjects-bank-palette">
+                    <div class="palette-title">قم بسحب المادة وإفلاتها داخل خانة الحصة المطلوبة:</div>
+                    <div class="draggable-items-pool" id="subjects-palette-pool">
+                        <div class="draggable-subject-card" draggable="true" ondragstart="handleCardDragStart(event)">رياضيات</div>
+                        <div class="draggable-subject-card" draggable="true" ondragstart="handleCardDragStart(event)">احياء</div>
+                        <div class="draggable-subject-card" draggable="true" ondragstart="handleCardDragStart(event)">انجليزي</div>
+                        <div class="draggable-subject-card" draggable="true" ondragstart="handleCardDragStart(event)">كيمياء</div>
+                        <div class="draggable-subject-card" draggable="true" ondragstart="handleCardDragStart(event)">توحيد</div>
+                        <div class="draggable-subject-card" draggable="true" ondragstart="handleCardDragStart(event)">فنون</div>
+                        <div class="draggable-subject-card" draggable="true" ondragstart="handleCardDragStart(event)">تقنيه رقميه</div>
+                        <div class="draggable-subject-card" draggable="true" ondragstart="handleCardDragStart(event)">بدنيه</div>
+                        <div class="draggable-subject-card unscheduled-card" draggable="true" ondragstart="handleCardDragStart(event)">غير مجدول</div>
+                    </div>
+                </div>
+
+                <div id="schedule-editor-rows-container"></div>
+            </div>
+
+        </div>
+
+        <div id="subject-panes-dynamic-container"></div>
+
+    </div>
+</main>
+
+<footer class="admin-sticky-footer">
+    <button class="btn-action btn-delete-all" onclick="clearTodayCloudContent()">مسح بيانات اليوم</button>
+    <button class="btn-action btn-cancel" onclick="cancelEditingSession()">إلغاء</button>
+    <button class="btn-action btn-save" onclick="saveEditsToCloud()">حفظ التعديلات</button>
 </footer>
 
-<div class="modal-mask" id="auth-modal-mask" onclick="if(event.target.id === 'auth-modal-mask') closeVerificationModal()">
-    <div class="modal-box">
-        <h3 style="color: var(--primary-dark);">التحقق السري للمسؤول</h3>
-        <input type="password" id="auth-key-field" placeholder="أدخل رمز التعديل السري..." onkeydown="if(event.key === 'Enter') executeAuthVerification()">
+<footer class="platform-footer">
+    المؤسسة التعليمية | العام الدراسي 2025/2026 | منصة متابعة الواجبات والمشاريع <br>
+    جميع الحقوق محفوظة © تم التطوير بواسطة <span>zyad ashry</span>
+</footer>
+
+<div class="modal-overlay" id="security-modal-overlay" onclick="if(event.target.id === 'security-modal-overlay') closeAuthModal()">
+    <div class="modal-window">
+        <h3>التحقق الأمني للمشرف</h3>
+        <p>يرجى إدخال رمز التحقق السري لتفعيل وضع التعديل</p>
+        <input type="password" id="secret-key-input" placeholder="••••" onkeydown="if(event.key === 'Enter') verifyAdminCredentials()">
         <div style="display: flex; gap: 10px; justify-content: center;">
-            <button class="btn btn-secondary" onclick="closeVerificationModal()">إلغاء</button>
-            <button class="btn btn-success" style="background-color: var(--accent-blue);" onclick="executeAuthVerification()">تحقق</button>
+            <button class="btn-action btn-cancel" onclick="closeAuthModal()">إلغاء</button>
+            <button class="btn-action btn-save" style="background-color: var(--main-dark-blue);" onclick="verifyAdminCredentials()">تحقق</button>
         </div>
     </div>
 </div>
 
 <script>
-    const FIREBASE_DB_ENDPOINT = "https://school-dashboard-4a36d-default-rtdb.firebaseio.com";
-    const SECRET_PROTECTION_KEY = "9561";
-
-    const WEEKLY_SCHEDULE_MAP = {
-        "الأحد": ["تقنيه رقميه", "انجليزي", "كيمياء", "فنون", "رياضيات"],
-        "الإثنين": ["انجليزي", "كيمياء", "تقنيه رقميه", "احياء", "رياضيات", "توحيد"],
-        "الثلاثاء": ["تقنيه رقميه", "احياء", "فنون", "انجليزي", "رياضيات", "كيمياء"],
-        "الأربعاء": ["رياضيات", "انجليزي", "احياء", "كيمياء", "تقنيه رقميه"],
-        "الخميس": ["انجليزي", "احياء", "كيمياء", "رياضيات"],
-        "الجمعة": [], "السبت": []
+    const FIREBASE_DB_URL = "https://school-dashboard-4a36d-default-rtdb.firebaseio.com";
+    
+    const KEYS_CONFIG = {
+        "MASTER": "9561",
+        "SUBJECTS": {
+            "رياضيات": "1111",
+            "احياء": "2222",
+            "انجليزي": "3333",
+            "كيمياء": "4444",
+            "توحيد": "5555",
+            "فنون": "6666",
+            "تقنيه رقميه": "7777",
+            "بدنيه": "8888"
+        }
     };
 
-    const MASTER_SUBJECT_LIST = ["رياضيات", "احياء", "انجليزي", "كيمياء", "توحيد", "فنون", "تقنيه رقميه"];
+    let WEEKLY_SCHEDULE_MAP = {
+        "الأحد": ["تقنيه رقميه", "انجليزي", "كيمياء", "فنون", "رياضيات", "بدنيه", "غير مجدول"],
+        "الإثنين": ["انجليزي", "كيمياء", "تقنيه رقميه", "احياء", "رياضيات", "توحيد", "غير مجدول"],
+        "الثلاثاء": ["تقنيه رقميه", "احياء", "فنون", "انجليزي", "رياضيات", "كيمياء", "غير مجدول"],
+        "الأربعاء": ["رياضيات", "انجليزي", "احياء", "كيمياء", "تقنيه رقميه", "غير مجدول", "غير مجدول"],
+        "الخميس": ["انجليزي", "احياء", "كيمياء", "رياضيات", "غير مجدول", "غير مجدول", "غير مجدول"]
+    };
 
-    let calculatedISODate = "";
-    let dayNameArabic = "";
-    let systemSortedSubjects = [];
-    let currentPinnedStatusMap = {}; 
+    const DAYS_KEYS = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"];
+    const TOTAL_SUBJECTS_LIST = ["رياضيات", "احياء", "انجليزي", "كيمياء", "توحيد", "فنون", "تقنيه رقميه", "بدنيه"];
+
+    let todayISODate = "";
+    let currentDayName = "";
+    let finalOrderedSubjects = [];
+    let pinnedFieldsState = {}; 
+    let currentAuthScope = null;
 
     window.addEventListener('DOMContentLoaded', () => {
-        setupSystemClock();
-        processSubjectSorting();
-        buildNavigationTabs();
-        buildSubjectCardsMarkup();
-        synchronizeCloudContent();
+        initializeClockSystem();
+        buildScheduleDropzonesStructure(); 
+        loadMasterData();
     });
 
-    function setupSystemClock() {
-        const dateObj = new Date();
-        const daysArabic = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
-        dayNameArabic = daysArabic[dateObj.getDay()];
+    function initializeClockSystem() {
+        const date = new Date();
+        const days = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+        currentDayName = days[date.getDay()];
         
-        const year = dateObj.getFullYear();
-        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-        const day = String(dateObj.getDate()).padStart(2, '0');
-        calculatedISODate = `${year}-${month}-${day}`;
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        todayISODate = `${y}-${m}-${d}`;
 
-        const formattedText = dateObj.toLocaleDateString('ar-SA', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-        document.getElementById('live-date-text').innerText = formattedText;
+        document.getElementById('live-date-header').innerText = date.toLocaleDateString('ar-SA', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        document.getElementById('day-status-tag').innerText = `جدول يوم ${currentDayName} نشط`;
     }
 
-    function processSubjectSorting() {
-        const todaySchedule = WEEKLY_SCHEDULE_MAP[dayNameArabic] || [];
-        systemSortedSubjects = [...todaySchedule];
-        MASTER_SUBJECT_LIST.forEach(subject => {
-            if (!systemSortedSubjects.includes(subject)) {
-                systemSortedSubjects.push(subject);
+    function buildScheduleDropzonesStructure() {
+        const container = document.getElementById('schedule-editor-rows-container');
+        container.innerHTML = '';
+        const numWords = ["الأولى", "الثانية", "الثالثة", "الرابعة", "الخامسة", "السادسة", "السابعة"];
+
+        DAYS_KEYS.forEach(day => {
+            const row = document.createElement('div');
+            row.className = 'schedule-day-row-config';
+            let cellsHtml = '';
+            for (let i = 1; i <= 7; i++) {
+                cellsHtml += `
+                    <div class="period-dropzone-cell" ondragover="handleZoneDragOver(event)" ondragleave="handleZoneDragLeave(event)" ondrop="handleCardDrop(event, '${day}', ${i})">
+                        <label>الحصة ${numWords[i-1]}</label>
+                        <div class="dropped-current-value val-empty" id="dropped-val-${day}-${i}">غير مجدول</div>
+                    </div>
+                `;
             }
+            row.innerHTML = `
+                <div class="schedule-day-title-label"><span class="gray-pin-icon">&#x1F4CC;&#xFE0E;</span> جدول يوم ${day}</div>
+                <div class="periods-inputs-row-grid">${cellsHtml}</div>
+            `;
+            container.appendChild(row);
         });
     }
 
-    function buildNavigationTabs() {
-        const navContainer = document.getElementById('navigation-root-bar');
-        navContainer.innerHTML = '';
+    function toggleSchedulePanel() {
+        const drawer = document.getElementById('schedule-manager-drawer');
+        drawer.classList.toggle('open-panel');
+    }
+
+    function handleCardDragStart(e) { e.dataTransfer.setData("text/plain", e.target.innerText.trim()); }
+    function handleZoneDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-hover'); }
+    function handleZoneDragLeave(e) { e.currentTarget.classList.remove('drag-hover'); }
+    function handleCardDrop(e, day, periodIndex) {
+        e.preventDefault(); e.currentTarget.classList.remove('drag-hover');
+        const subjectName = e.dataTransfer.getData("text/plain");
+        if(subjectName) { updateZoneDisplayValue(day, periodIndex, subjectName); }
+    }
+
+    function updateZoneDisplayValue(day, periodIndex, val) {
+        const displayEl = document.getElementById(`dropped-val-${day}-${periodIndex}`);
+        if(displayEl) {
+            displayEl.innerText = val;
+            if(val === "غير مجدول" || !val) { displayEl.classList.add('val-empty'); }
+            else { displayEl.classList.remove('val-empty'); }
+        }
+    }
+
+    function loadMasterData() {
+        fetch(`${FIREBASE_DB_URL}/cloud_announcement.json`)
+        .then(res => res.json())
+        .then(announcementData => {
+            const bar = document.getElementById('global-announcement-bar');
+            const viewText = document.getElementById('announcement-text-view');
+            const inputField = document.getElementById('announcement-text-input');
+            
+            if(announcementData && announcementData.text && announcementData.text.trim() !== "") {
+                viewText.innerText = `📢 إعلان عام: ${announcementData.text}`;
+                inputField.value = announcementData.text;
+                bar.classList.add('has-content');
+            } else {
+                viewText.innerText = `📢 لا توجد مستجدات معلنة حالياً.`;
+                inputField.value = "";
+                bar.classList.remove('has-content');
+            }
+
+            return fetch(`${FIREBASE_DB_URL}/app_weekly_schedule.json`);
+        })
+        .then(res => res.json())
+        .then(savedSchedule => {
+            if(savedSchedule) { WEEKLY_SCHEDULE_MAP = savedSchedule; }
+            
+            DAYS_KEYS.forEach(day => {
+                const arr = WEEKLY_SCHEDULE_MAP[day] || ["غير مجدول", "غير مجدول", "غير مجدول", "غير مجدول", "غير مجدول", "غير مجدول", "غير مجدول"];
+                for(let i = 1; i <= 7; i++) { updateZoneDisplayValue(day, i, arr[i-1] || "غير مجدول"); }
+            });
+
+            sortSubjectsBySchedule();
+            generateNavigationTabs();
+            generateSubjectMarkupPanes();
+            fetchCloudDataAndRender();
+        });
+    }
+
+    function sortSubjectsBySchedule() {
+        const todaySchedule = WEEKLY_SCHEDULE_MAP[currentDayName] || [];
+        const uniqueTodaySchedule = [...new Set(todaySchedule.filter(s => s && s.trim() !== "" && s.trim() !== "غير مجدول"))];
+        
+        finalOrderedSubjects = [...uniqueTodaySchedule];
+        TOTAL_SUBJECTS_LIST.forEach(sub => { if (!finalOrderedSubjects.includes(sub)) finalOrderedSubjects.push(sub); });
+    }
+
+    function generateNavigationTabs() {
+        const container = document.getElementById('navigation-root-tabs');
+        container.innerHTML = '';
 
         const homeTab = document.createElement('div');
-        homeTab.className = 'nav-item active';
-        homeTab.id = 'tab-trigger-home';
+        homeTab.className = 'nav-link-tab active-tab';
+        homeTab.id = 'tab-link-home';
         homeTab.innerText = 'الرئيسية';
-        homeTab.onclick = () => activateViewSegment('home');
-        navContainer.appendChild(homeTab);
+        homeTab.onclick = () => switchViewPane('home');
+        container.appendChild(homeTab);
 
-        const todaySchedule = WEEKLY_SCHEDULE_MAP[dayNameArabic] || [];
+        const todaySchedule = WEEKLY_SCHEDULE_MAP[currentDayName] || [];
+        const uniqueTodaySchedule = [...new Set(todaySchedule.filter(s => s && s.trim() !== "" && s.trim() !== "غير مجدول"))];
 
-        systemSortedSubjects.forEach(subject => {
+        finalOrderedSubjects.forEach(sub => {
             const tab = document.createElement('div');
-            tab.id = `tab-trigger-${subject}`;
+            tab.id = `tab-link-${sub}`;
             
-            if (todaySchedule.includes(subject)) {
-                tab.className = 'nav-item scheduled-item';
-                tab.innerText = subject;
-            } else {
-                tab.className = 'nav-item not-scheduled-item';
-                tab.innerText = subject;
+            // فحص لو المادة مجدولة اليوم أو لا، لتغيير لون التبويب العلوي
+            if (uniqueTodaySchedule.includes(sub)) { 
+                tab.className = 'nav-link-tab';
+                tab.innerHTML = `${sub} <span class="active-dot"></span>`; 
+            } else { 
+                tab.className = 'nav-link-tab unscheduled-tab'; // إضافة كلاس رمادي فاتح للمواد الغير مجدولة
+                tab.innerText = sub; 
             }
-            tab.onclick = () => activateViewSegment(subject);
-            navContainer.appendChild(tab);
+            
+            tab.onclick = () => switchViewPane(sub);
+            container.appendChild(tab);
         });
     }
 
-    function buildSubjectCardsMarkup() {
-        const cardsContainer = document.getElementById('subject-cards-dynamic-container');
-        cardsContainer.innerHTML = '';
-        const todaySchedule = WEEKLY_SCHEDULE_MAP[dayNameArabic] || [];
+    function generateSubjectMarkupPanes() {
+        const container = document.getElementById('subject-panes-dynamic-container');
+        container.innerHTML = '';
 
-        systemSortedSubjects.forEach(subject => {
-            const isScheduled = todaySchedule.includes(subject);
+        finalOrderedSubjects.forEach(sub => {
             const pane = document.createElement('div');
-            pane.id = `view-pane-${subject}`;
-            pane.className = 'view-pane';
+            pane.id = `view-pane-${sub}`;
+            pane.className = 'view-pane-segment';
 
             pane.innerHTML = `
-                <div class="card-header-title">
-                    <span>${subject}</span>
-                    ${isScheduled ? '<span class="day-status-badge">مجدولة اليوم</span>' : ''}
-                </div>
+                <div class="panel-main-title">${sub}</div>
                 
-                <div class="subject-field-box">
-                    <div class="field-title">📝 الواجبات المدرسية والمهام</div>
-                    <div class="text-data-view" id="view-text-${subject}-assignments">لا توجد واجبات مسجلة لهذه المادة اليوم.</div>
-                    <textarea class="field-textarea" id="edit-input-${subject}-assignments" placeholder="اكتب الواجبات هنا..."></textarea>
+                <div class="subject-block-field">
+                    <div class="field-label-text">الواجبات المدرسية والمهام</div>
+                    <div class="data-text-viewer" id="preview-${sub}-assignments">لا يوجد محتوى مسجل.</div>
+                    <textarea class="input-editor-textarea scope-target-${sub}" id="input-${sub}-assignments" placeholder="اكتب تفاصيل الواجبات والمهام..."></textarea>
                 </div>
 
-                <div class="subject-field-box">
-                    <div class="field-title">
-                        <span>🚀 المشاريع والأعمال الأدائية</span>
-                        <button type="button" class="btn-pin-toggle" id="pin-btn-${subject}-projects" onclick="togglePinState('${subject}', 'projects')">📌 تثبيت</button>
+                <div class="subject-block-field">
+                    <div class="field-label-text">
+                        <span>المشاريع والأعمال الأدائية</span>
+                        <button class="btn-pin-action scope-target-${sub}" id="pin-${sub}-projects" onclick="togglePin('${sub}', 'projects')"><span class="gray-pin-icon">&#x1F4CC;&#xFE0E;</span> تثبيت</button>
                     </div>
-                    <div class="text-data-view" id="view-text-${subject}-projects">لا توجد مشاريع قائمة.</div>
-                    <textarea class="field-textarea" id="edit-input-${subject}-projects" placeholder="اكتب متطلبات المشاريع هنا..."></textarea>
+                    <div class="data-text-viewer" id="preview-${sub}-projects">لا يوجد محتوى مسجل.</div>
+                    <textarea class="input-editor-textarea scope-target-${sub}" id="input-${sub}-projects" placeholder="اكتب تفاصيل المشاريع..."></textarea>
                 </div>
 
-                <div class="subject-field-box">
-                    <div class="field-title">
-                        <span>🔗 روابط الملخصات والمرفقات</span>
-                        <button type="button" class="btn-pin-toggle" id="pin-btn-${subject}-summaries" onclick="togglePinState('${subject}', 'summaries')">📌 تثبيت</button>
-                    </div>
-                    <div class="text-data-view" id="view-text-${subject}-summaries">لا توجد ملخصات متوفرة.</div>
-                    <textarea class="field-textarea" id="edit-input-${subject}-summaries" placeholder="ضع رابط المرفق السحابي (http://...) هنا..."></textarea>
-                    <div id="attachment-preview-area-${subject}"></div>
+                <div class="subject-block-field">
+                    <div class="field-label-text">روابط الملخصات والمرفقات</div>
+                    <div class="data-text-viewer" id="preview-${sub}-summaries">لا يوجد محتوى مسجل.</div>
+                    <input type="text" class="input-editor-text scope-target-${sub}" id="input-${sub}-summaries" placeholder="ضع رابط الملخص هنا...">
                 </div>
 
-                <div class="subject-field-box">
-                    <div class="field-title">
-                        <span>📌 ملاحظات وتنبيهات مخصصة</span>
-                        <button type="button" class="btn-pin-toggle" id="pin-btn-${subject}-notes" onclick="togglePinState('${subject}', 'notes')">📌 تثبيت</button>
+                <div class="subject-block-field">
+                    <div class="field-label-text">
+                        <span>ملاحظات وتنبيهات مخصصة</span>
+                        <button class="btn-pin-action scope-target-${sub}" id="pin-${sub}-notes" onclick="togglePin('${sub}', 'notes')"><span class="gray-pin-icon">&#x1F4CC;&#xFE0E;</span> تثبيت</button>
                     </div>
-                    <div class="text-data-view" id="view-text-${subject}-notes">لا توجد ملاحظات إضافية.</div>
-                    <textarea class="field-textarea" id="edit-input-${subject}-notes" placeholder="اكتب أي تنبيه أو ملاحظة مخصصة هنا..."></textarea>
+                    <div class="data-text-viewer" id="preview-${sub}-notes">لا يوجد محتوى مسجل.</div>
+                    <textarea class="input-editor-textarea scope-target-${sub}" id="input-${sub}-notes" placeholder="اكتب الملاحظات والتنبيهات هنا..."></textarea>
                 </div>
             `;
-            cardsContainer.appendChild(pane);
+            container.appendChild(pane);
         });
     }
 
-    function togglePinState(subject, field) {
-        const btn = document.getElementById(`pin-btn-${subject}-${field}`);
-        const key = `${subject}_${field}`;
-        if (currentPinnedStatusMap[key]) {
-            currentPinnedStatusMap[key] = false;
-            btn.classList.remove('is-pinned');
-            btn.innerText = "📌 تثبيت";
+    function togglePin(sub, field) {
+        const btn = document.getElementById(`pin-${sub}-${field}`);
+        const key = `${sub}_${field}`;
+        if (pinnedFieldsState[key]) {
+            pinnedFieldsState[key] = false;
+            btn.classList.remove('pinned-active');
+            btn.innerHTML = '<span class="gray-pin-icon">&#x1F4CC;&#xFE0E;</span> تثبيت';
         } else {
-            currentPinnedStatusMap[key] = true;
-            btn.classList.add('is-pinned');
-            btn.innerText = "📌 مثبت دائم";
+            pinnedFieldsState[key] = true;
+            btn.classList.add('pinned-active');
+            btn.innerHTML = '<span class="gray-pin-icon">&#x1F4CC;&#xFE0E;</span> مثبت دائم';
         }
     }
 
-    function activateViewSegment(targetId) {
-        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.view-pane').forEach(el => el.classList.remove('active-pane'));
+    function switchViewPane(targetId) {
+        document.querySelectorAll('.nav-link-tab').forEach(el => el.classList.remove('active-tab'));
+        document.querySelectorAll('.view-pane-segment').forEach(el => el.classList.remove('active-pane'));
 
         if (targetId === 'home') {
-            document.getElementById('tab-trigger-home').classList.add('active');
+            document.getElementById('tab-link-home').classList.add('active-tab');
             document.getElementById('view-pane-home').classList.add('active-pane');
         } else {
-            document.getElementById(`tab-trigger-${targetId}`).classList.add('active');
-            document.getElementById(`view-pane-${targetId}`).classList.add('active-pane');
+            if(document.getElementById(`tab-link-${targetId}`)) document.getElementById(`tab-link-${targetId}`).classList.add('active-tab');
+            if(document.getElementById(`view-pane-${targetId}`)) document.getElementById(`view-pane-${targetId}`).classList.add('active-pane');
         }
     }
 
-    function synchronizeCloudContent() {
-        fetch(`${FIREBASE_DB_ENDPOINT}/pinned_data.json`)
+    function fetchCloudDataAndRender() {
+        fetch(`${FIREBASE_DB_URL}/pinned_data.json`)
         .then(res => res.json())
         .then(pinnedData => {
-            currentPinnedStatusMap = {};
-            if(pinnedData) {
-                Object.keys(pinnedData).forEach(key => {
-                    currentPinnedStatusMap[key] = pinnedData[key].isPinned || false;
-                });
-            }
+            pinnedFieldsState = {};
+            if(pinnedData) { Object.keys(pinnedData).forEach(k => { pinnedFieldsState[k] = pinnedData[k].isPinned || false; }); }
 
-            fetch(`${FIREBASE_DB_ENDPOINT}/${calculatedISODate}.json`)
+            fetch(`${FIREBASE_DB_URL}/${todayISODate}.json`)
             .then(r => r.json())
             .then(todayData => {
-                
-                MASTER_SUBJECT_LIST.forEach(sub => {
+                TOTAL_SUBJECTS_LIST.forEach(sub => {
                     const fields = ['assignments', 'projects', 'summaries', 'notes'];
-                    
                     fields.forEach(f => {
-                        const viewElement = document.getElementById(`view-text-${sub}-${f}`);
-                        const inputElement = document.getElementById(`edit-input-${sub}-${f}`);
-                        const pinBtn = document.getElementById(`pin-btn-${sub}-${f}`);
-                        
+                        const viewEl = document.getElementById(`preview-${sub}-${f}`);
+                        const inputEl = document.getElementById(`input-${sub}-${f}`);
+                        const pinBtn = document.getElementById(`pin-${sub}-${f}`);
                         const pinKey = `${sub}_${f}`;
-                        const isPinned = currentPinnedStatusMap[pinKey] || false;
+                        const isPinned = pinnedFieldsState[pinKey] || false;
 
                         if(pinBtn) {
-                            if(isPinned) { pinBtn.classList.add('is-pinned'); pinBtn.innerText = "📌 مثبت دائم"; }
-                            else { pinBtn.classList.remove('is-pinned'); pinBtn.innerText = "📌 تثبيت"; }
+                            if(isPinned) { pinBtn.classList.add('pinned-active'); pinBtn.innerHTML = '<span class="gray-pin-icon">&#x1F4CC;&#xFE0E;</span> مثبت دائم'; }
+                            else { pinBtn.classList.remove('pinned-active'); pinBtn.innerHTML = '<span class="gray-pin-icon">&#x1F4CC;&#xFE0E;</span> تثبيت'; }
                         }
 
-                        let val = "";
-                        if (isPinned && pinnedData && pinnedData[pinKey]) {
-                            val = pinnedData[pinKey].value ? pinnedData[pinKey].value.trim() : "";
-                        } else if (todayData && todayData[sub] && todayData[sub][f]) {
-                            val = todayData[sub][f].trim();
-                        }
+                        let value = "";
+                        if (isPinned && pinnedData && pinnedData[pinKey]) value = pinnedData[pinKey].value ? pinnedData[pinKey].value.trim() : "";
+                        else if (todayData && todayData[sub] && todayData[sub][f]) value = todayData[sub][f].trim();
                         
-                        if(inputElement) inputElement.value = val;
+                        if(inputEl) inputEl.value = value;
 
-                        if(viewElement) {
-                            if (f === 'assignments' && !val) viewElement.innerText = "لا توجد واجبات مسجلة لهذه المادة اليوم.";
-                            else if (f === 'projects' && !val) viewElement.innerText = "لا توجد مشاريع قائمة.";
-                            else if (f === 'summaries' && !val) viewElement.innerText = "لا توجد ملخصات متوفرة.";
-                            else if (f === 'notes' && !val) viewElement.innerText = "لا توجد ملاحظات إضافية.";
+                        if(viewEl) {
+                            if(!value) viewEl.innerHTML = `<span class="summary-empty-text">لا يوجد محتوى مسجل</span>`;
                             else {
-                                viewElement.innerHTML = isPinned ? `<span class="pinned-badge-ui">مثبت 📌</span> ${val}` : val;
+                                if(f === 'summaries') viewEl.innerHTML = `<a href="${value}" target="_blank" class="btn-url-downloader">فتح ملف الملخص المرفق</a>`;
+                                else viewEl.innerHTML = isPinned ? `<span class="gray-pin-icon">&#x1F4CC;&#xFE0E;</span> ${value}` : value;
                             }
                         }
                     });
-
-                    const sumVal = document.getElementById(`edit-input-${sub}-summaries`).value.trim();
-                    const previewDiv = document.getElementById(`attachment-preview-area-${sub}`);
-                    const textSumView = document.getElementById(`view-text-${sub}-summaries`);
-                    const isSummaryPinned = currentPinnedStatusMap[`${sub}_summaries`] || false;
-                    
-                    if (sumVal.startsWith('http://') || sumVal.startsWith('https://')) {
-                        if (textSumView) textSumView.style.display = 'none';
-                        let pinBadge = isSummaryPinned ? `<span class="pinned-badge-ui" style="margin-right:8px;">مثبت 📌</span>` : '';
-                        previewDiv.innerHTML = `${pinBadge}<a href="${sumVal}" target="_blank" class="btn-attachment">📄 فتح ملف الملخص المرفق</a>`;
-                    } else {
-                        if (textSumView) textSumView.style.display = 'block';
-                        previewDiv.innerHTML = '';
-                    }
                 });
-                compileDashboardSummary();
+                buildProfessionalSummary();
+                buildScheduleCards();
             });
         });
     }
 
-    function compileDashboardSummary() {
-        const display = document.getElementById('dynamic-summary-target');
-        const activeSchedule = WEEKLY_SCHEDULE_MAP[dayNameArabic] || [];
+    function buildProfessionalSummary() {
+        const display = document.getElementById('summary-cards-stack-target');
+        const gridNotesContainer = document.getElementById('top-pinned-notes-grid');
+        const todaySchedule = WEEKLY_SCHEDULE_MAP[currentDayName] || [];
+        const validTodaySchedule = todaySchedule.filter(s => s && s.trim() !== "" && s.trim() !== "غير مجدول");
 
-        if (activeSchedule.length === 0) {
-            display.innerHTML = `<p style="font-weight:700; color: var(--muted-gray);">اليوم عطلة نهاية الأسبوع، لا توجد حصص مجدولة.</p>`;
+        let summaryHtml = ''; let pinnedCardsHtml = ''; let hasPinnedNotes = false;
+
+        TOTAL_SUBJECTS_LIST.forEach(subject => {
+            const notes = document.getElementById(`input-${subject}-notes`).value.trim();
+            const isNotePinned = pinnedFieldsState[`${subject}_notes`] || false;
+            if (notes && isNotePinned) {
+                hasPinnedNotes = true;
+                pinnedCardsHtml += `
+                    <div class="pinned-note-box-item">
+                        <span class="gray-pin-icon">&#x1F4CC;&#xFE0E;</span>
+                        <div><strong style="display:block; margin-bottom:4px; color:#475569;">${subject}</strong><span>${notes}</span></div>
+                    </div>`;
+            }
+        });
+
+        if (hasPinnedNotes) { gridNotesContainer.innerHTML = pinnedCardsHtml; gridNotesContainer.style.display = 'grid'; }
+        else { gridNotesContainer.style.display = 'none'; }
+
+        if (validTodaySchedule.length === 0) {
+            display.innerHTML = `<p class="summary-empty-text" style="padding: 20px; text-align:center;">إجازة نهاية الأسبوع، لا توجد حصص مجدولة لليوم.</p>`;
             return;
         }
 
-        let html = `<ol class="summary-list">`;
-        activeSchedule.forEach((subject, index) => {
-            const assign = document.getElementById(`edit-input-${subject}-assignments`).value.trim();
-            const sumLink = document.getElementById(`edit-input-${subject}-summaries`).value.trim();
-            
-            const isProjectPinned = currentPinnedStatusMap[`${subject}_projects`] || false;
-            const isNotePinned = currentPinnedStatusMap[`${subject}_notes`] || false;
-            const isSummaryPinned = currentPinnedStatusMap[`${subject}_summaries`] || false;
+        const uniqueTodaySummaryList = [...new Set(validTodaySchedule)];
 
-            const projectVal = document.getElementById(`edit-input-${subject}-projects`).value.trim();
-            const notes = document.getElementById(`edit-input-${subject}-notes`).value.trim();
+        uniqueTodaySummaryList.forEach((subject, index) => {
+            const assign = document.getElementById(`input-${subject}-assignments`).value.trim();
+            const urlLink = document.getElementById(`input-${subject}-summaries`).value.trim();
+            const projectVal = document.getElementById(`input-${subject}-projects`).value.trim();
+            const isProjectPinned = pinnedFieldsState[`${subject}_projects`] || false;
 
             let details = "";
-            if (assign) {
-                details = `<span style="color:var(--primary-dark);">${assign}</span>`;
-            } else if (projectVal) {
-                details = `<span style="color:var(--primary-dark); font-weight:600;">${isProjectPinned ? '📌 ' : ''}مشروع قائم: ${projectVal}</span>`;
-            } else if (sumLink.startsWith('http')) {
-                details = `<span style="color: var(--accent-blue); font-weight: 700;">💡 ${isSummaryPinned ? '📌 ' : ''}يتوفر ملف ملخص مرفق بداخل قسم المادة</span>`;
-            } else {
-                details = `<span style="color: var(--muted-gray); font-style: italic;">(لا يوجد واجبات أو ملخصات مسجلة اليوم)</span>`;
+            if (assign) details = assign;
+            else if (urlLink) details = `يتوفر ملخص مرفق للمادة (افتح قسم المادة لفتحه)`;
+            else if (projectVal) details = `${isProjectPinned ? '<span class="gray-pin-icon">&#x1F4CC;&#xFE0E;</span> ' : ''}مشروع قائم: ${projectVal}`;
+            else details = `<span class="summary-empty-text">(لا يوجد واجبات أو ملخصات مسجلة)</span>`;
+
+            summaryHtml += `
+                <div class="summary-row-item">
+                    <div class="summary-right-side">
+                        <div class="summary-index-circle">${index + 1}</div>
+                        <div class="summary-subject-badge" onclick="switchViewPane('${subject}')" style="cursor:pointer;">${subject}</div>
+                        <div class="summary-details-text">${details}</div>
+                    </div>
+                </div>`;
+        });
+        display.innerHTML = summaryHtml;
+    }
+
+    function buildScheduleCards() {
+        const grid = document.getElementById('daily-schedule-cards-grid');
+        const todaySchedule = WEEKLY_SCHEDULE_MAP[currentDayName] || [];
+        const totalValid = todaySchedule.filter(s => s && s.trim() !== "" && s.trim() !== "غير مجدول");
+        
+        if (totalValid.length === 0) {
+            grid.innerHTML = '<p class="summary-empty-text">لا توجد حصص مجدولة اليوم.</p>';
+            return;
+        }
+
+        let html = '';
+        todaySchedule.forEach((subject, index) => {
+            const isUnscheduled = (!subject || subject.trim() === "" || subject.trim() === "غير مجدول");
+            html += `
+                <div class="mini-schedule-card" ${!isUnscheduled ? `onclick="switchViewPane('${subject}')" style="pointer:cursor;"` : ''}>
+                    <div class="mini-card-num">${index + 1}</div>
+                    <div class="mini-card-name" style="${isUnscheduled ? 'color:#94a3b8; font-weight:normal;' : ''}">${isUnscheduled ? "غير مجدول" : subject}</div>
+                </div>`;
+        });
+        grid.innerHTML = html;
+    }
+
+    function openAuthModal() {
+        if (document.body.classList.contains('edit-mode')) { deactivateEditMode(); return; }
+        document.getElementById('secret-key-input').value = '';
+        document.getElementById('security-modal-overlay').classList.add('show');
+        setTimeout(() => document.getElementById('secret-key-input').focus(), 100);
+    }
+
+    function closeAuthModal() { document.getElementById('security-modal-overlay').classList.remove('show'); }
+
+    function verifyAdminCredentials() {
+        const enteredKey = document.getElementById('secret-key-input').value.trim();
+        
+        if (enteredKey === KEYS_CONFIG.MASTER) {
+            currentAuthScope = 'all';
+            closeAuthModal();
+            activateEditMode();
+        } else {
+            let foundSubject = null;
+            for (const [subject, code] of Object.entries(KEYS_CONFIG.SUBJECTS)) {
+                if (enteredKey === code) { foundSubject = subject; break; }
             }
 
-            let pinBadgeText = isNotePinned ? `<span class="pinned-badge-ui">مثبت 📌</span> ` : "";
-            let noteBlock = notes ? `<div class="summary-note-block">⚠️ ملاحظة: ${pinBadgeText}${notes}</div>` : "";
-
-            html += `
-                <li>
-                    <div class="summary-subject-row">
-                        <strong style="color: var(--accent-blue); cursor: pointer;" onclick="activateViewSegment('${subject}')">${index + 1}. ${subject} — </strong> 
-                        ${details}
-                    </div>
-                    ${noteBlock}
-                </li>`;
-        });
-        html += `</ol>`;
-        display.innerHTML = html;
-    }
-
-    function promptPasswordVerification() {
-        if (document.body.classList.contains('edit-mode')) { disableEditingEnvironment(); return; }
-        document.getElementById('auth-key-field').value = '';
-        document.getElementById('auth-modal-mask').classList.add('show');
-        setTimeout(() => document.getElementById('auth-key-field').focus(), 100);
-    }
-
-    function closeVerificationModal() { document.getElementById('auth-modal-mask').classList.remove('show'); }
-
-    function executeAuthVerification() {
-        if (document.getElementById('auth-key-field').value === SECRET_PROTECTION_KEY) {
-            closeVerificationModal();
-            enableEditingEnvironment();
-        } else {
-            alert("رمز الحماية السري خاطئ!");
+            if (foundSubject) {
+                currentAuthScope = foundSubject;
+                closeAuthModal();
+                activateEditMode();
+                switchViewPane(foundSubject);
+            } else {
+                alert("رمز التحقق الأمني غير صحيح!");
+            }
         }
     }
 
-    function enableEditingEnvironment() {
+    function activateEditMode() {
         document.body.classList.add('edit-mode');
-        document.getElementById('toggle-edit-mode-btn').innerText = "🔒 قفل التعديل";
+        document.getElementById('admin-trigger-btn').innerText = "قفل التعديل";
+
+        document.getElementById('global-announcement-bar').classList.add('has-content');
+
+        if (currentAuthScope === 'all') {
+            document.body.classList.add('admin-full');
+            document.querySelectorAll('.input-editor-textarea, .input-editor-text, .btn-pin-action').forEach(el => el.style.display = 'block');
+            document.querySelectorAll('.data-text-viewer').forEach(el => el.style.display = 'none');
+        } else {
+            document.body.classList.remove('admin-full');
+            document.querySelectorAll(`.scope-target-${currentAuthScope}`).forEach(el => el.style.display = 'block');
+            document.getElementById(`view-pane-${currentAuthScope}`).querySelectorAll('.data-text-viewer').forEach(el => el.style.display = 'none');
+        }
+    }
+
+    function deactivateEditMode() {
+        document.body.classList.remove('edit-mode', 'admin-full');
+        document.getElementById('schedule-manager-drawer').classList.remove('open-panel');
+        document.getElementById('admin-trigger-btn').innerText = "تعديل";
         
-        document.getElementById('view-pane-home').classList.add('active-pane');
-        document.querySelectorAll('.view-pane').forEach(pane => {
-            pane.classList.add('active-pane');
-            const textSummaryView = pane.querySelector(`[id^="view-text-"][id$="-summaries"]`);
-            if(textSummaryView) textSummaryView.style.display = 'none';
-        });
+        document.querySelectorAll('.input-editor-textarea, .input-editor-text, .btn-pin-action').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.data-text-viewer').forEach(el => el.style.display = 'block');
+        
+        currentAuthScope = null;
+        switchViewPane('home');
+        loadMasterData(); 
     }
 
-    function disableEditingEnvironment() {
-        document.body.classList.remove('edit-mode');
-        document.getElementById('toggle-edit-mode-btn').innerText = "🔧 تفعيل التعديل";
-        activateViewSegment('home');
-    }
-
-    function commitEditsToCloud() {
+    function saveEditsToCloud() {
         const todayPacket = {};
         const pinnedPacket = {};
+        const schedulePacket = {};
+        const promises = [];
 
-        MASTER_SUBJECT_LIST.forEach(sub => {
-            todayPacket[sub] = {
-                assignments: document.getElementById(`edit-input-${sub}-assignments`).value.trim(),
-                projects: document.getElementById(`edit-input-${sub}-projects`).value.trim(),
-                summaries: document.getElementById(`edit-input-${sub}-summaries`).value.trim(),
-                notes: document.getElementById(`edit-input-${sub}-notes`).value.trim()
-            };
+        TOTAL_SUBJECTS_LIST.forEach(sub => {
+            if (currentAuthScope === 'all' || currentAuthScope === sub) {
+                todayPacket[sub] = {
+                    assignments: document.getElementById(`input-${sub}-assignments`).value.trim(),
+                    projects: document.getElementById(`input-${sub}-projects`).value.trim(),
+                    summaries: document.getElementById(`input-${sub}-summaries`).value.trim(),
+                    notes: document.getElementById(`input-${sub}-notes`).value.trim()
+                };
 
-            // حفظ حالة التثبيت للمشاريع والملخصات والملاحظات
-            ['projects', 'summaries', 'notes'].forEach(f => {
-                const pinKey = `${sub}_${f}`;
-                if (currentPinnedStatusMap[pinKey]) {
-                    pinnedPacket[pinKey] = {
-                        isPinned: true,
-                        value: document.getElementById(`edit-input-${sub}-${f}`).value.trim()
-                    };
-                } else {
-                    pinnedPacket[pinKey] = { isPinned: false, value: "" };
+                ['projects', 'notes'].forEach(f => {
+                    const pinKey = `${sub}_${f}`;
+                    if (pinnedFieldsState[pinKey]) {
+                        pinnedPacket[pinKey] = { isPinned: true, value: document.getElementById(`input-${sub}-${f}`).value.trim() };
+                    } else {
+                        pinnedPacket[pinKey] = { isPinned: false, value: "" };
+                    }
+                });
+            }
+        });
+
+        if (currentAuthScope === 'all') {
+            DAYS_KEYS.forEach(day => {
+                schedulePacket[day] = [];
+                for(let i = 1; i <= 7; i++) {
+                    const txt = document.getElementById(`dropped-val-${day}-${i}`).innerText.trim();
+                    schedulePacket[day].push(txt || "غير مجدول");
                 }
             });
+
+            const annTxt = document.getElementById('announcement-text-input').value.trim();
+            promises.push(fetch(`${FIREBASE_DB_URL}/cloud_announcement.json`, { method: 'PUT', body: JSON.stringify({ text: annTxt }) }));
+        }
+
+        TOTAL_SUBJECTS_LIST.forEach(sub => {
+            if (currentAuthScope === 'all' || currentAuthScope === sub) {
+                promises.push(fetch(`${FIREBASE_DB_URL}/${todayISODate}/${sub}.json`, { method: 'PUT', body: JSON.stringify(todayPacket[sub]) }));
+            }
         });
 
-        fetch(`${FIREBASE_DB_ENDPOINT}/${calculatedISODate}.json`, { method: 'PUT', body: JSON.stringify(todayPacket) })
-        .then(() => {
-            return fetch(`${FIREBASE_DB_ENDPOINT}/pinned_data.json`, { method: 'PUT', body: JSON.stringify(pinnedPacket) });
-        })
-        .then(() => {
-            disableEditingEnvironment();
-            synchronizeCloudContent();
-            alert("تم حفظ وتحديث التعديلات والمثبتات سحابياً بنجاح! 💾📌");
+        if (currentAuthScope === 'all') {
+            promises.push(fetch(`${FIREBASE_DB_URL}/pinned_data.json`, { method: 'PUT', body: JSON.stringify(pinnedPacket) }));
+            promises.push(fetch(`${FIREBASE_DB_URL}/app_weekly_schedule.json`, { method: 'PUT', body: JSON.stringify(schedulePacket) }));
+        }
+
+        Promise.all(promises).then(() => {
+            deactivateEditMode();
+            loadMasterData(); 
+            alert("تم حفظ التعديلات والمزامنة بنجاح! 💾");
         });
     }
 
-    function abortEditingSession() {
-        synchronizeCloudContent();
-        disableEditingEnvironment();
-    }
+    function cancelEditingSession() { loadMasterData(); deactivateEditMode(); }
 
-    function wipeTodayCloudData() {
-        if(!confirm("هل أنت متأكد من حذف بيانات هذا اليوم؟ (لن يتم حذف الملاحظات والمشاريع والملخصات الثابتة دائماً)")) return;
-        fetch(`${FIREBASE_DB_ENDPOINT}/${calculatedISODate}.json`, { method: 'DELETE' })
-        .then(() => {
-            disableEditingEnvironment();
-            synchronizeCloudContent();
-        });
+    function clearTodayCloudContent() {
+        if(!confirm("هل أنت متأكد من مسح واجبات وملخصات اليوم Mom?")) return;
+        fetch(`${FIREBASE_DB_URL}/${todayISODate}.json`, { method: 'DELETE' }).then(() => { deactivateEditMode(); loadMasterData(); });
     }
 </script>
 
