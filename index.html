@@ -136,6 +136,85 @@
             font-weight: 700; font-size: 0.85rem; display: inline-flex; align-items: center; margin-bottom: 15px; border: 1px solid #bae6fd;
         }
 
+        /* تنسيق شريط التنقل والمحرك الزمني الجديد للملخصات */
+        .timeline-navigation-ribbon {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(to left, #f8fafc, #ffffff);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .timeline-btn {
+            background-color: var(--main-dark-blue);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            user-select: none;
+        }
+
+        .timeline-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .timeline-btn:active {
+            transform: translateY(0);
+        }
+
+        .timeline-center-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .timeline-date-display {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--main-dark-blue);
+        }
+
+        .timeline-date-picker {
+            border: 1px solid var(--card-border);
+            padding: 5px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            color: var(--main-dark-blue);
+            font-weight: 600;
+            background-color: white;
+        }
+
+        .btn-reset-today {
+            background-color: var(--accent-gold);
+            color: var(--main-dark-blue);
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-reset-today:hover {
+            background-color: #b89330;
+            color: white;
+        }
+
         .outside-pinned-notes-grid {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; margin-bottom: 20px;
         }
@@ -145,7 +224,6 @@
             display: flex; align-items: flex-start; gap: 10px; color: #92400e; font-size: 0.95rem; line-height: 1.5;
         }
 
-        /* حماية وتثبيت لون الدبّوس الرمادي ومنع تحوله للون أحمر في الهواتف */
         .gray-pin-icon { 
             color: #475569 !important; 
             font-family: "Segoe UI Symbol", "Apple Color Emoji", "Noto Color Emoji", sans-serif !important;
@@ -184,6 +262,28 @@
         .summary-subject-badge { font-size: 1rem; font-weight: 800; color: var(--main-dark-blue); min-width: 90px; }
         .summary-details-text { font-size: 0.95rem; color: var(--text-dark); line-height: 1.5; word-break: break-word; }
         .summary-empty-text { color: #94a3b8; font-style: italic; }
+
+        .empty-state-container {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+        .empty-state-title {
+            color: var(--main-dark-blue);
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        .btn-create-summary-placeholder {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 700;
+            margin-top: 15px;
+            cursor: pointer;
+        }
 
         .daily-schedule-section-title { font-size: 1.15rem; font-weight: 800; color: var(--main-dark-blue); margin-bottom: 12px; }
         .schedule-cards-grid { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -269,6 +369,7 @@
             .mini-schedule-card { max-width: 100%; }
             .btn-action { flex: 1; text-align: center; font-size: 0.85rem; padding: 10px; }
             .admin-sticky-footer { justify-content: center; gap: 6px; padding: 10px; }
+            .timeline-navigation-ribbon { justify-content: center; gap: 12px; }
         }
     </style>
 </head>
@@ -300,6 +401,16 @@
 <main class="main-content-container">
     
     <div class="schedule-status-tag" id="day-status-tag">📋 جدول اليوم نشط</div>
+
+    <div class="timeline-navigation-ribbon">
+        <button id="nav-day-prev" class="timeline-btn" onclick="offsetViewingDate(-1)">← اليوم السابق</button>
+        <div class="timeline-center-control">
+            <span class="timeline-date-display" id="timeline-active-date-text">...</span>
+            <input type="date" class="timeline-date-picker" id="timeline-inline-picker" onchange="jumpToDirectDate(this.value)">
+            <button id="nav-day-today" class="btn-reset-today" onclick="resetToCurrentActualDate()">اليوم الحالي</button>
+        </div>
+        <button id="nav-day-next" class="timeline-btn" onclick="offsetViewingDate(1)">اليوم التالي →</button>
+    </div>
 
     <div id="top-pinned-notes-grid" class="outside-pinned-notes-grid"></div>
 
@@ -394,8 +505,9 @@
     const DAYS_KEYS = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"];
     const TOTAL_SUBJECTS_LIST = ["رياضيات", "احياء", "انجليزي", "كيمياء", "توحيد", "فنون", "تقنيه رقميه", "بدنيه"];
 
-    let todayISODate = "";
-    let currentDayName = "";
+    let todayISODate = "";       // تاريخ اليوم الفعلي الثابت للجهاز
+    let viewingISODate = "";     // التاريخ النشط الذي يتصفحه المستخدم حالياً
+    let currentDayName = "";     // اسم اليوم التابع للتاريخ المستعرض حالياً
     let finalOrderedSubjects = [];
     let pinnedFieldsState = {}; 
     let currentAuthScope = null;
@@ -403,21 +515,89 @@
     window.addEventListener('DOMContentLoaded', () => {
         initializeClockSystem();
         buildScheduleDropzonesStructure(); 
+        setupKeyboardShortcuts();
         loadMasterData();
     });
 
     function initializeClockSystem() {
         const date = new Date();
-        const days = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
-        currentDayName = days[date.getDay()];
+        const days = ["السبت", "الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة"];
         
         const y = date.getFullYear();
         const m = String(date.getMonth() + 1).padStart(2, '0');
         const d = String(date.getDate()).padStart(2, '0');
+        
         todayISODate = `${y}-${m}-${d}`;
+        viewingISODate = todayISODate; // في البداية يكون العرض متطابقاً مع تاريخ اليوم
 
         document.getElementById('live-date-header').innerText = date.toLocaleDateString('ar-SA', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-        document.getElementById('day-status-tag').innerText = `جدول يوم ${currentDayName} نشط`;
+        syncTimelineLabelsAndLayout();
+    }
+
+    // لتحديث النصوص والتقويم وجدول الحصص بناءً على التاريخ المستعرض حالياً
+    function syncTimelineLabelsAndLayout() {
+        const targetDate = new Date(viewingISODate);
+        const days = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+        currentDayName = days[targetDate.getDay()];
+
+        // تحديث حقل التقويم وعنوان شريط التنقل
+        document.getElementById('timeline-inline-picker').value = viewingISODate;
+        document.getElementById('timeline-active-date-text').innerText = targetDate.toLocaleDateString('ar-SA', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+        // تحديث شارة حالة اليوم
+        const statusTag = document.getElementById('day-status-tag');
+        if (viewingISODate === todayISODate) {
+            statusTag.innerText = `📋 جدول يوم ${currentDayName} نشط (اليوم الحالي)`;
+            statusTag.style.backgroundColor = "#e0f2fe";
+            statusTag.style.color = "#0369a1";
+        } else {
+            statusTag.innerText = `🔍 مستعرض تاريخي: يوم ${currentDayName} (${viewingISODate})`;
+            statusTag.style.backgroundColor = "#ffedd5";
+            statusTag.style.color = "#c2410c";
+        }
+
+        sortSubjectsBySchedule();
+    }
+
+    function offsetViewingDate(daysOffset) {
+        const current = new Date(viewingISODate);
+        current.setDate(current.getDate() + daysOffset);
+        
+        const y = current.getFullYear();
+        const m = String(current.getMonth() + 1).padStart(2, '0');
+        const d = String(current.getDate()).padStart(2, '0');
+        
+        viewingISODate = `${y}-${m}-${d}`;
+        switchViewPane('home');
+        syncTimelineLabelsAndLayout();
+        loadMasterData();
+    }
+
+    function jumpToDirectDate(dateStr) {
+        if (!dateStr) return;
+        viewingISODate = dateStr;
+        switchViewPane('home');
+        syncTimelineLabelsAndLayout();
+        loadMasterData();
+    }
+
+    function resetToCurrentActualDate() {
+        if (viewingISODate === todayISODate) return;
+        viewingISODate = todayISODate;
+        switchViewPane('home');
+        syncTimelineLabelsAndLayout();
+        loadMasterData();
+    }
+
+    function setupKeyboardShortcuts() {
+        window.addEventListener('keydown', (e) => {
+            if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowLeft') {
+                offsetViewingDate(-1); // يرجع للخلف يوم واحد
+            } else if (e.key === 'ArrowRight') {
+                offsetViewingDate(1);  // يتقدم للأمام يوم واحد
+            }
+        });
     }
 
     function buildScheduleDropzonesStructure() {
@@ -447,11 +627,7 @@
 
     function toggleSchedulePanel() {
         const drawer = document.getElementById('schedule-manager-drawer');
-        if (drawer.style.display === "none" || drawer.style.display === "") {
-            drawer.style.display = "block";
-        } else {
-            drawer.style.display = "none";
-        }
+        drawer.style.display = (drawer.style.display === "none" || drawer.style.display === "") ? "block" : "none";
     }
 
     function handleCardDragStart(e) { e.dataTransfer.setData("text/plain", e.target.innerText.trim()); }
@@ -501,7 +677,7 @@
                 for(let i = 1; i <= 7; i++) { updateZoneDisplayValue(day, i, arr[i-1] || "غير مجدول"); }
             });
 
-            sortSubjectsBySchedule();
+            syncTimelineLabelsAndLayout();
             generateNavigationTabs();
             generateSubjectMarkupPanes();
             fetchCloudDataAndRender();
@@ -627,7 +803,8 @@
             pinnedFieldsState = {};
             if(pinnedData) { Object.keys(pinnedData).forEach(k => { pinnedFieldsState[k] = pinnedData[k].isPinned || false; }); }
 
-            fetch(`${FIREBASE_DB_URL}/${todayISODate}.json`)
+            // يتم الجلب ديناميكياً من حقل التاريخ المختار حالياً لتفعيل التصفح الزمني والتراجع
+            fetch(`${FIREBASE_DB_URL}/${viewingISODate}.json`)
             .then(r => r.json())
             .then(todayData => {
                 TOTAL_SUBJECTS_LIST.forEach(sub => {
@@ -672,6 +849,7 @@
         const validTodaySchedule = todaySchedule.filter(s => s && s.trim() !== "" && s.trim() !== "غير مجدول");
 
         let summaryHtml = ''; let pinnedCardsHtml = ''; let hasPinnedNotes = false;
+        let totalActiveDataEntries = 0; // لحساب إذا كان اليوم فارغاً تماماً بجميع مواده
 
         TOTAL_SUBJECTS_LIST.forEach(subject => {
             const notes = document.getElementById(`input-${subject}-notes`).value.trim();
@@ -689,35 +867,66 @@
         if (hasPinnedNotes) { gridNotesContainer.innerHTML = pinnedCardsHtml; gridNotesContainer.style.display = 'grid'; }
         else { gridNotesContainer.style.display = 'none'; }
 
-        if (validTodaySchedule.length === 0) {
-            display.innerHTML = `<p class="summary-empty-text" style="padding: 20px; text-align:center;">إجازة نهاية الأسبوع، لا توجد حصص مجدولة لليوم.</p>`;
+        // التحقق من وجود أي محتوى مسجل باليوم لتجنب اعتبار الأيام التي بها ملخصات في الإجازة فارغة
+        TOTAL_SUBJECTS_LIST.forEach(sub => {
+            if(document.getElementById(`input-${sub}-assignments`).value.trim() || 
+               document.getElementById(`input-${sub}-summaries`).value.trim() || 
+               document.getElementById(`input-${sub}-projects`).value.trim()) {
+                totalActiveDataEntries++;
+            }
+        });
+
+        // إذا كان اليوم عطلة نهاية أسبوع ولا يحتوي على أي ملخصات مرفوعة مطلقاً
+        if (validTodaySchedule.length === 0 && totalActiveDataEntries === 0) {
+            display.innerHTML = `
+                <div class="empty-state-container">
+                    <div class="empty-state-title">لا يوجد ملخص لهذا اليوم</div>
+                    <p>إجازة نهاية الأسبوع، أو يوم حر لم يتم إدراج واجبات أو ملخصات فيه بعد.</p>
+                    <button class="btn-create-summary-placeholder" onclick="openAuthModal()">إنشاء ملخص لهذا اليوم</button>
+                </div>`;
             return;
         }
 
-        const uniqueTodaySummaryList = [...new Set(validTodaySchedule)];
+        // إذا لم يكن هناك جدول حصص لكن المشرف أضاف ملخصات، نعتمد قائمة المواد التي تحتوي على بيانات فقط لتعرض للطلاب
+        const targetListToRender = (validTodaySchedule.length > 0) ? [...new Set(validTodaySchedule)] : TOTAL_SUBJECTS_LIST;
 
-        uniqueTodaySummaryList.forEach((subject, index) => {
+        let renderedCardsCount = 0;
+        targetListToRender.forEach((subject, index) => {
             const assign = document.getElementById(`input-${subject}-assignments`).value.trim();
             const urlLink = document.getElementById(`input-${subject}-summaries`).value.trim();
             const projectVal = document.getElementById(`input-${subject}-projects`).value.trim();
             const isProjectPinned = pinnedFieldsState[`${subject}_projects`] || false;
 
+            // إذا كنا في وضع الإجازة لا نعرض المواد الفارغة، بل فقط المواد التي جهز المعلم ملخصاتها
+            if(validTodaySchedule.length === 0 && !assign && !urlLink && !projectVal) return;
+
+            renderedCardsCount++;
             let details = "";
             if (assign) details = assign;
-            else if (urlLink) details = `يتوفر ملخص مرفق للمادة (افتح قسم المادة لفتحه)`;
+            else if (urlLink) details = `يتوفر ملخص مرفق للمادة (اضغط على اسم المادة لفتحه)`;
             else if (projectVal) details = `${isProjectPinned ? '<span class="gray-pin-icon">&#x1F4CC;&#xFE0E;</span> ' : ''}مشروع قائم: ${projectVal}`;
             else details = `<span class="summary-empty-text">(لا يوجد واجبات أو ملخصات مسجلة)</span>`;
 
             summaryHtml += `
                 <div class="summary-row-item">
                     <div class="summary-right-side">
-                        <div class="summary-index-circle">${index + 1}</div>
+                        <div class="summary-index-circle">${renderedCardsCount}</div>
                         <div class="summary-subject-badge" onclick="switchViewPane('${subject}')" style="cursor:pointer;">${subject}</div>
                         <div class="summary-details-text">${details}</div>
                     </div>
                 </div>`;
         });
-        display.innerHTML = summaryHtml;
+
+        if(renderedCardsCount === 0 && validTodaySchedule.length === 0) {
+            display.innerHTML = `
+                <div class="empty-state-container">
+                    <div class="empty-state-title">لا يوجد ملخص لهذا اليوم</div>
+                    <p>لا توجد واجبات أو مذكرات مرفوعة حالياً.</p>
+                    <button class="btn-create-summary-placeholder" onclick="openAuthModal()">إنشاء ملخص لهذا اليوم</button>
+                </div>`;
+        } else {
+            display.innerHTML = summaryHtml;
+        }
     }
 
     function buildScheduleCards() {
@@ -726,7 +935,7 @@
         const totalValid = todaySchedule.filter(s => s && s.trim() !== "" && s.trim() !== "غير مجدول");
         
         if (totalValid.length === 0) {
-            grid.innerHTML = '<p class="summary-empty-text">لا توجد حصص مجدولة اليوم.</p>';
+            grid.innerHTML = '<p class="summary-empty-text" style="padding:10px 0;">لا توجد حصص مجدولة في هذا اليوم (إجازة رسمية أو نهاية أسبوع).</p>';
             return;
         }
 
@@ -847,7 +1056,8 @@
 
         TOTAL_SUBJECTS_LIST.forEach(sub => {
             if (currentAuthScope === 'all' || currentAuthScope === sub) {
-                promises.push(fetch(`${FIREBASE_DB_URL}/${todayISODate}/${sub}.json`, { method: 'PUT', body: JSON.stringify(todayPacket[sub]) }));
+                // يتم الحفظ والرفع لـ Firebase بناءً على التاريخ المختار في شريط التنقل
+                promises.push(fetch(`${FIREBASE_DB_URL}/${viewingISODate}/${sub}.json`, { method: 'PUT', body: JSON.stringify(todayPacket[sub]) }));
             }
         });
 
