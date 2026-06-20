@@ -423,6 +423,140 @@
             background: #e2e8f0;
         }
 
+        /* ====== محرر الملفات المتعددة ====== */
+        .summaries-editor { display: none; margin-top: 8px; }
+        body.edit-mode .summaries-editor { display: block; }
+
+        .file-entries-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
+
+        .file-entry-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .file-entry-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .file-entry-name-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            font-weight: 600;
+            color: var(--main-dark-blue);
+        }
+        .file-entry-name-input:focus { outline: none; border-color: var(--main-dark-blue); }
+
+        .btn-remove-entry {
+            background: #fee2e2;
+            color: #dc2626;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+        .btn-remove-entry:hover { background: #fca5a5; }
+
+        .file-entry-url-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            color: var(--text-dark);
+            direction: ltr;
+            text-align: left;
+        }
+        .file-entry-url-input:focus { outline: none; border-color: var(--main-dark-blue); }
+
+        .file-entry-upload-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-entry-upload {
+            background-color: var(--main-dark-blue);
+            color: white;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+        .btn-entry-upload:hover { opacity: 0.85; }
+        .btn-entry-upload:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .entry-upload-status { font-size: 0.82rem; color: var(--text-muted); flex: 1; min-width: 100px; }
+
+        .entry-progress-wrap {
+            height: 5px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+            display: none;
+        }
+        .entry-progress-bar {
+            height: 100%;
+            background: #10b981;
+            width: 0%;
+            transition: width 0.3s;
+            border-radius: 3px;
+        }
+
+        .btn-add-summary-entry {
+            width: 100%;
+            padding: 10px;
+            background: white;
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            color: var(--main-dark-blue);
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-add-summary-entry:hover { background: #f1f5f9; border-color: var(--main-dark-blue); }
+
+        /* عرض الملفات للمستخدم */
+        .summary-files-display { display: flex; flex-direction: column; gap: 8px; }
+        .summary-file-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #0284c7;
+            color: white !important;
+            text-decoration: none !important;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            width: fit-content;
+        }
+        .summary-file-link:hover { background-color: #0369a1; }
+
         .admin-sticky-footer { display: none; justify-content: flex-end; gap: 10px; background-color: white; padding: 12px 20px; border-top: 3px solid var(--main-dark-blue); position: sticky; bottom: 0; z-index: 90; flex-wrap: wrap; }
         body.edit-mode .admin-sticky-footer { display: flex; }
 
@@ -834,20 +968,11 @@
                 </div>
 
                 <div class="subject-block-field">
-                    <div class="field-label-text">روابط الملخصات والمرفقات</div>
-                    <div class="data-text-viewer" id="preview-${sub}-summaries">لا يوجد محتوى مسجل.</div>
-                    <input type="text" class="input-editor-text scope-target-${sub}" id="input-${sub}-summaries" placeholder="ضع رابط الملخص هنا أو ارفع ملفاً...">
-                    <div class="file-upload-section">
-                        <div class="file-upload-label">📎 رفع ملف مباشرة (الحد الأقصى 60MB — PDF، Word، صور، ...)</div>
-                        <div class="file-upload-controls">
-                            <input type="file" id="file-input-${sub}" style="display:none;" accept="*/*" onchange="handleFileSelected(event, '${sub}')">
-                            <button class="btn-choose-file" id="file-btn-${sub}" onclick="document.getElementById('file-input-${sub}').click()">📂 اختر ملفاً</button>
-                            <span class="file-upload-status" id="file-status-${sub}">لم يتم اختيار ملف بعد</span>
-                        </div>
-                        <div class="file-upload-progress-wrap" id="progress-wrap-${sub}">
-                            <div class="file-upload-progress-bar" id="progress-bar-${sub}"></div>
-                        </div>
-                        <div class="or-divider">أو أدخل الرابط يدوياً</div>
+                    <div class="field-label-text">الملخصات والمرفقات</div>
+                    <div class="data-text-viewer" id="preview-${sub}-summaries"><span class="summary-empty-text">لا يوجد محتوى مسجل</span></div>
+                    <div class="summaries-editor" id="editor-${sub}-summaries">
+                        <div class="file-entries-list" id="files-list-${sub}"></div>
+                        <button class="btn-add-summary-entry" onclick="addSummaryEntry('${sub}')">➕ إضافة ملف أو رابط</button>
                     </div>
                 </div>
 
@@ -903,7 +1028,7 @@
             .then(r => r.json())
             .then(todayData => {
                 TOTAL_SUBJECTS_LIST.forEach(sub => {
-                    const fields = ['assignments', 'projects', 'summaries', 'notes'];
+                    const fields = ['assignments', 'projects', 'notes'];
                     fields.forEach(f => {
                         const viewEl = document.getElementById(`preview-${sub}-${f}`);
                         const inputEl = document.getElementById(`input-${sub}-${f}`);
@@ -919,17 +1044,29 @@
                         let value = "";
                         if (isPinned && pinnedData && pinnedData[pinKey]) value = pinnedData[pinKey].value ? pinnedData[pinKey].value.trim() : "";
                         else if (todayData && todayData[sub] && todayData[sub][f]) value = todayData[sub][f].trim();
-                        
+
                         if(inputEl) inputEl.value = value;
 
                         if(viewEl) {
                             if(!value) viewEl.innerHTML = `<span class="summary-empty-text">لا يوجد محتوى مسجل</span>`;
-                            else {
-                                if(f === 'summaries') viewEl.innerHTML = `<a href="${value}" target="_blank" class="btn-url-downloader">فتح ملف الملخص المرفق</a>`;
-                                else viewEl.innerHTML = isPinned ? `<span class="gray-pin-icon">&#x1F4CC;&#xFE0E;</span> ${value}` : value;
-                            }
+                            else viewEl.innerHTML = isPinned ? `<span class="gray-pin-icon">&#x1F4CC;&#xFE0E;</span> ${value}` : value;
                         }
                     });
+
+                    // تحميل الملفات المتعددة للملخصات
+                    let filesData = [];
+                    const rawSummaries = todayData && todayData[sub] && todayData[sub]['summaries'];
+                    if (rawSummaries) {
+                        if (typeof rawSummaries === 'string') {
+                            // توافق مع البيانات القديمة (رابط واحد)
+                            try { filesData = JSON.parse(rawSummaries); }
+                            catch(e) { filesData = rawSummaries ? [{name: 'ملخص', url: rawSummaries}] : []; }
+                        } else if (Array.isArray(rawSummaries)) {
+                            filesData = rawSummaries;
+                        }
+                    }
+                    initSummariesEditor(sub, filesData);
+                    renderSummariesPreview(sub, filesData);
                 });
                 buildProfessionalSummary();
                 buildScheduleCards();
@@ -968,7 +1105,7 @@
         // التحقق من وجود أي محتوى مسجل باليوم لتجنب اعتبار الأيام التي بها ملخصات في الإجازة فارغة
         TOTAL_SUBJECTS_LIST.forEach(sub => {
             if(document.getElementById(`input-${sub}-assignments`).value.trim() || 
-               document.getElementById(`input-${sub}-summaries`).value.trim() || 
+               collectSummariesFromEditor(sub).length > 0 || 
                document.getElementById(`input-${sub}-projects`).value.trim()) {
                 totalActiveDataEntries++;
             }
@@ -991,7 +1128,8 @@
         let renderedCardsCount = 0;
         targetListToRender.forEach((subject, index) => {
             const assign = document.getElementById(`input-${subject}-assignments`).value.trim();
-            const urlLink = document.getElementById(`input-${subject}-summaries`).value.trim();
+            const summaryFiles = collectSummariesFromEditor(subject);
+            const urlLink = summaryFiles.length > 0 ? summaryFiles[0].url : "";
             const projectVal = document.getElementById(`input-${subject}-projects`).value.trim();
             const isProjectPinned = pinnedFieldsState[`${subject}_projects`] || false;
 
@@ -1135,7 +1273,7 @@
                 todayPacket[sub] = {
                     assignments: document.getElementById(`input-${sub}-assignments`).value.trim(),
                     projects: document.getElementById(`input-${sub}-projects`).value.trim(),
-                    summaries: document.getElementById(`input-${sub}-summaries`).value.trim(),
+                    summaries: collectSummariesFromEditor(sub),
                     notes: document.getElementById(`input-${sub}-notes`).value.trim()
                 };
 
@@ -1183,6 +1321,153 @@
     }
 
     function cancelEditingSession() { loadMasterData(); deactivateEditMode(); }
+
+    // ====== إدارة الملفات المتعددة ======
+
+    let _entryCounter = 0;
+
+    function initSummariesEditor(sub, files) {
+        const list = document.getElementById(`files-list-${sub}`);
+        if (!list) return;
+        list.innerHTML = '';
+        if (files && files.length > 0) {
+            files.forEach(f => addSummaryEntry(sub, f.name || '', f.url || ''));
+        }
+    }
+
+    function renderSummariesPreview(sub, files) {
+        const viewEl = document.getElementById(`preview-${sub}-summaries`);
+        if (!viewEl) return;
+        if (!files || files.length === 0) {
+            viewEl.innerHTML = `<span class="summary-empty-text">لا يوجد محتوى مسجل</span>`;
+            return;
+        }
+        let html = '<div class="summary-files-display">';
+        files.forEach(f => {
+            if (f.url) {
+                html += `<a href="${f.url}" target="_blank" class="summary-file-link">📄 ${f.name || 'ملخص'}</a>`;
+            }
+        });
+        html += '</div>';
+        viewEl.innerHTML = html;
+    }
+
+    function addSummaryEntry(sub, name = '', url = '') {
+        const list = document.getElementById(`files-list-${sub}`);
+        if (!list) return;
+        const id = `entry-${sub}-${++_entryCounter}`;
+        const card = document.createElement('div');
+        card.className = 'file-entry-card';
+        card.id = id;
+        card.innerHTML = `
+            <div class="file-entry-header">
+                <input type="text" class="file-entry-name-input" placeholder="اسم الملف (مثال: ملخص الفصل الأول)" value="${name.replace(/"/g,'&quot;')}">
+                <button class="btn-remove-entry" onclick="removeSummaryEntry('${id}')" title="حذف">✕</button>
+            </div>
+            <div class="file-entry-upload-row">
+                <input type="file" id="fi-${id}" style="display:none;" accept="*/*" onchange="handleEntryFileSelected(event,'${id}')">
+                <button class="btn-entry-upload" id="fb-${id}" onclick="document.getElementById('fi-${id}').click()">📂 رفع ملف</button>
+                <span class="entry-upload-status" id="fs-${id}">${url ? '✅ تم تحميل ملف' : 'لم يتم اختيار ملف'}</span>
+            </div>
+            <div class="entry-progress-wrap" id="fp-${id}"><div class="entry-progress-bar" id="fpb-${id}"></div></div>
+            <div class="or-divider">أو أدخل رابطاً مباشراً</div>
+            <input type="text" class="file-entry-url-input" id="fu-${id}" placeholder="https://..." value="${url.replace(/"/g,'&quot;')}" dir="ltr">
+        `;
+        list.appendChild(card);
+    }
+
+    function removeSummaryEntry(id) {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+    }
+
+    function collectSummariesFromEditor(sub) {
+        const list = document.getElementById(`files-list-${sub}`);
+        if (!list) return [];
+        const cards = list.querySelectorAll('.file-entry-card');
+        const files = [];
+        cards.forEach(card => {
+            const name = card.querySelector('.file-entry-name-input').value.trim();
+            const url  = card.querySelector('.file-entry-url-input').value.trim();
+            if (url) files.push({ name: name || 'ملف', url });
+        });
+        return files;
+    }
+
+    function handleEntryFileSelected(event, entryId) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const MAX_SIZE = 60 * 1024 * 1024;
+        if (file.size > MAX_SIZE) {
+            alert("⚠️ حجم الملف يتجاوز الحد المسموح به (60MB).");
+            event.target.value = '';
+            return;
+        }
+        const statusEl = document.getElementById(`fs-${entryId}`);
+        const progressWrap = document.getElementById(`fp-${entryId}`);
+        const barEl = document.getElementById(`fpb-${entryId}`);
+        const btnEl = document.getElementById(`fb-${entryId}`);
+        const urlInput = document.getElementById(`fu-${entryId}`);
+        const nameInput = document.getElementById(entryId).querySelector('.file-entry-name-input');
+
+        progressWrap.style.display = 'block';
+        barEl.style.width = '5%';
+        barEl.style.background = '#10b981';
+        statusEl.textContent = '⏳ جاري التحضير...';
+        btnEl.disabled = true;
+
+        // تعبئة اسم الملف تلقائياً إن كان فارغاً
+        if (!nameInput.value.trim()) {
+            nameInput.value = file.name.replace(/\.[^/.]+$/, '');
+        }
+
+        fetch(GOFILE_API_SERVERS)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status !== 'ok' || !data.data.servers.length) throw new Error('لا يوجد سيرفر');
+                const server = data.data.servers[0].name;
+                const formData = new FormData();
+                formData.append('file', file);
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', `https://${server}.gofile.io/contents/uploadFile`);
+                xhr.upload.onprogress = e => {
+                    if (e.lengthComputable) {
+                        const pct = Math.round(e.loaded / e.total * 100);
+                        barEl.style.width = pct + '%';
+                        statusEl.textContent = `⬆️ ${pct}%`;
+                    }
+                };
+                xhr.onload = () => {
+                    btnEl.disabled = false;
+                    if (xhr.status === 200) {
+                        const res = JSON.parse(xhr.responseText);
+                        if (res.status === 'ok' && res.data) {
+                            const link = res.data.directLink || res.data.downloadPage;
+                            urlInput.value = link;
+                            barEl.style.width = '100%';
+                            statusEl.textContent = `✅ تم: ${file.name}`;
+                        } else {
+                            barEl.style.background = '#ef4444';
+                            statusEl.textContent = '❌ فشل الرفع';
+                        }
+                    } else {
+                        barEl.style.background = '#ef4444';
+                        statusEl.textContent = `❌ خطأ HTTP ${xhr.status}`;
+                    }
+                };
+                xhr.onerror = () => {
+                    btnEl.disabled = false;
+                    barEl.style.background = '#ef4444';
+                    statusEl.textContent = '❌ خطأ في الاتصال';
+                };
+                xhr.send(formData);
+            })
+            .catch(err => {
+                btnEl.disabled = false;
+                barEl.style.background = '#ef4444';
+                statusEl.textContent = `❌ ${err.message}`;
+            });
+    }
 
     // ====== وظائف رفع الملفات (عبر GoFile.io) ======
 
