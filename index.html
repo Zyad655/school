@@ -3,1571 +3,732 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة المدرسة التعليمية - منصة متابعة الواجبات والمشاريع</title>
+    <title>منصة التمارين والتضخيم الأسبوعية | Workout Pro</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Cairo Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#0B0F19',
+                        cardbg: 'rgba(20, 27, 45, 0.7)',
+                        accent: '#10B981',
+                        accentHover: '#059669',
+                        danger: '#EF4444',
+                        warning: '#F59E0B'
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            --main-dark-blue: #0d2c54;     
-            --gradient-blue: linear-gradient(135deg, #0d2c54 0%, #1a477c 100%);
-            --accent-gold: #cca43b;        
-            --bg-light: #f4f7fa;           
-            --card-border: #e2e8f0;
-            --text-dark: #1e293b;
-            --text-muted: #64748b;
-            --dark-gray-pin: #475569; 
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
         body {
-            background-color: var(--bg-light);
-            color: var(--text-dark);
+            font-family: 'Cairo', sans-serif;
+            background: radial-gradient(circle at top left, #1e1b4b, #0f172a, #0b0f19);
+            color: #F8FAFC;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
         }
-
-        .top-meta-bar {
-            background-color: #081d37;
-            color: rgba(255, 255, 255, 0.7);
-            padding: 8px 20px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            font-weight: 600;
-            flex-wrap: wrap;
-            gap: 5px;
+        .glass-card {
+            background: rgba(30, 41, 59, 0.55);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
-
-        .platform-header {
-            background: var(--gradient-blue);
-            padding: 25px 20px;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 5px solid var(--accent-gold);
-            flex-wrap: wrap;
-            gap: 15px;
+        .glass-modal {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-        .header-brand-wrapper { display: flex; align-items: center; gap: 15px; }
-        .brand-logo-circle {
-            width: 60px; height: 60px; background-color: rgba(255, 255, 255, 0.1);
-            border: 3px solid var(--accent-gold); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.6rem; font-weight: 900; color: var(--accent-gold);
-            flex-shrink: 0;
+        .status-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        .brand-text-titles h1 { font-size: 1.6rem; font-weight: 800; margin-bottom: 4px; }
-        .brand-text-titles p { font-size: 0.85rem; color: #cbd5e1; line-height: 1.3; }
-
-        .btn-top-admin-trigger {
-            background-color: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white; padding: 8px 20px; border-radius: 6px; font-weight: 600; font-size: 0.85rem;
-            cursor: pointer; transition: all 0.2s;
+        .status-btn:active {
+            transform: scale(0.9);
         }
-        .btn-top-admin-trigger:hover { background-color: white; color: var(--main-dark-blue); }
-
-        .platform-navigation {
-            background-color: white; display: flex; padding: 0 15px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); position: sticky; top: 0; z-index: 50;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
         }
-
-        .platform-navigation::-webkit-scrollbar { display: none; }
-
-        .nav-link-tab {
-            padding: 15px 16px; font-weight: 700; color: var(--text-muted); cursor: pointer;
-            font-size: 0.95rem; display: flex; align-items: center; gap: 6px; border-bottom: 3px solid transparent; white-space: nowrap;
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
         }
-        .nav-link-tab:hover { color: var(--main-dark-blue); background-color: #f8fafc; }
-        .nav-link-tab.active-tab { color: var(--main-dark-blue); border-bottom-color: var(--main-dark-blue); background-color: #f1f5f9; }
-        .nav-link-tab .active-dot { width: 7px; height: 7px; background-color: var(--accent-gold); border-radius: 50%; display: inline-block; }
-        
-        .nav-link-tab.unscheduled-tab {
-            color: #94a3b8;
-            background-color: #fafafa;
-            font-weight: 500;
-        }
-        .nav-link-tab.unscheduled-tab:hover {
-            color: #64748b;
-            background-color: #f1f5f9;
-        }
-
-        .announcement-banner-bar {
-            background-color: var(--dark-gray-pin);
-            color: white;
-            padding: 12px 20px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            display: none; 
-            align-items: center;
-            gap: 15px;
-            box-shadow: inset 0 -2px 5px rgba(0,0,0,0.1);
-        }
-        .announcement-banner-bar.has-content { display: flex; }
-        body.edit-mode.admin-full .announcement-banner-bar { display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
-        
-        .announcement-input-field {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            font-size: 0.95rem;
-            display: none;
-        }
-        body.edit-mode.admin-full .announcement-input-field { display: block; }
-        body.edit-mode.admin-full .announcement-display-text { display: none; }
-
-        .main-content-container {
-            max-width: 1300px; margin: 20px auto; width: 100%; padding: 0 15px; flex: 1;
-        }
-
-        .schedule-status-tag {
-            background-color: #e0f2fe; color: #0369a1; padding: 8px 16px; border-radius: 6px;
-            font-weight: 700; font-size: 0.85rem; display: inline-flex; align-items: center; margin-bottom: 15px; border: 1px solid #bae6fd;
-        }
-
-        /* تنسيق شريط التنقل والمحرك الزمني الجديد للملخصات */
-        .timeline-navigation-ribbon {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: linear-gradient(to left, #f8fafc, #ffffff);
-            border: 1px solid var(--card-border);
-            border-radius: 10px;
-            padding: 12px 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .timeline-btn {
-            background-color: var(--main-dark-blue);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            user-select: none;
-        }
-
-        .timeline-btn:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-        }
-
-        .timeline-btn:active {
-            transform: translateY(0);
-        }
-
-        .timeline-center-control {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .timeline-date-display {
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: var(--main-dark-blue);
-        }
-
-        .timeline-date-picker {
-            border: 1px solid var(--card-border);
-            padding: 5px 8px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: inherit;
-            color: var(--main-dark-blue);
-            font-weight: 600;
-            background-color: white;
-        }
-
-        .btn-reset-today {
-            background-color: var(--accent-gold);
-            color: var(--main-dark-blue);
-            border: none;
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-weight: 800;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .btn-reset-today:hover {
-            background-color: #b89330;
-            color: white;
-        }
-
-        .outside-pinned-notes-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; margin-bottom: 20px;
-        }
-
-        .pinned-note-box-item {
-            background-color: #fef3c7; border: 1px solid #fde68a; border-radius: 8px; padding: 15px;
-            display: flex; align-items: flex-start; gap: 10px; color: #92400e; font-size: 0.95rem; line-height: 1.5;
-        }
-
-        .gray-pin-icon { 
-            color: #475569 !important; 
-            font-family: "Segoe UI Symbol", "Apple Color Emoji", "Noto Color Emoji", sans-serif !important;
-            font-weight: normal !important; 
-            font-style: normal !important; 
-            font-size: 1.1rem; 
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 6px;
-            text-shadow: 0 0 0 #475569 !important;
-            -webkit-text-fill-color: #475569 !important;
-        }
-
-        .content-card-panel {
-            background: white; border-radius: 12px; border: 1px solid var(--card-border); padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); margin-bottom: 20px;
-        }
-
-        .panel-main-title {
-            font-size: 1.3rem; font-weight: 800; color: var(--main-dark-blue); margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;
-        }
-
-        .view-pane-segment { display: none; }
-        .view-pane-segment.active-pane { display: block; }
-
-        .summary-rows-stack { display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px; }
-        .summary-row-item {
-            background-color: white; border: 1px solid var(--card-border); border-radius: 10px; padding: 15px; display: flex; align-items: center; justify-content: space-between;
-        }
-
-        .summary-right-side { display: flex; align-items: center; gap: 15px; flex: 1; flex-wrap: wrap; }
-        .summary-index-circle {
-            width: 32px; height: 32px; background-color: var(--main-dark-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; flex-shrink: 0;
-        }
-
-        .summary-subject-badge { font-size: 1rem; font-weight: 800; color: var(--main-dark-blue); min-width: 90px; }
-        .summary-details-text { font-size: 0.95rem; color: var(--text-dark); line-height: 1.5; word-break: break-word; }
-        .summary-empty-text { color: #94a3b8; font-style: italic; }
-
-        .empty-state-container {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-muted);
-        }
-        .empty-state-title {
-            color: var(--main-dark-blue);
-            font-size: 1.2rem;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-        .btn-create-summary-placeholder {
-            background-color: #10b981;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-weight: 700;
-            margin-top: 15px;
-            cursor: pointer;
-        }
-
-        .daily-schedule-section-title { font-size: 1.15rem; font-weight: 800; color: var(--main-dark-blue); margin-bottom: 12px; }
-        .schedule-cards-grid { display: flex; flex-wrap: wrap; gap: 10px; }
-
-        .mini-schedule-card {
-            background-color: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; padding: 10px 15px; display: flex; align-items: center; gap: 10px; min-width: 130px; flex: 1;
-        }
-
-        .mini-card-num {
-            background-color: #e2e8f0; color: var(--main-dark-blue); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0;
-        }
-        .mini-card-name { font-size: 0.9rem; font-weight: 700; color: var(--text-dark); }
-
-        .btn-toggle-schedule-panel {
-            display: none; background-color: var(--main-dark-blue); color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: 700; cursor: pointer; margin-top: 20px; font-size: 0.9rem; width: 100%; text-align: center;
-        }
-        body.edit-mode.admin-full .btn-toggle-schedule-panel { display: block; }
-
-        .admin-schedule-manager-panel {
-            background-color: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 12px; padding: 15px; margin-top: 15px; overflow-x: auto;
-        }
-
-        .subjects-bank-palette { background: #f1f5f9; padding: 12px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
-        .palette-title { font-size: 0.85rem; font-weight: 800; color: #475569; margin-bottom: 10px; }
-        .draggable-items-pool { display: flex; flex-wrap: wrap; gap: 8px; }
-        
-        .draggable-subject-card {
-            background-color: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 12px; font-weight: 700; font-size: 0.85rem; color: var(--main-dark-blue); cursor: grab; user-select: none; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .draggable-subject-card.unscheduled-card { background-color: #64748b; color: white; border-color: #475569; }
-
-        .schedule-day-row-config { background: white; padding: 12px; border-radius: 8px; border: 1px solid var(--card-border); margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; min-width: 600px; }
-        .schedule-day-title-label { font-weight: 800; color: var(--main-dark-blue); font-size: 0.95rem; }
-        .periods-inputs-row-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; width: 100%; }
-        
-        .period-dropzone-cell {
-            background-color: #f8fafc; border: 2px dashed #e2e8f0; border-radius: 6px; padding: 8px; display: flex; flex-direction: column; align-items: center; gap: 6px; min-height: 75px; justify-content: center;
-        }
-        .period-dropzone-cell.drag-hover { background-color: #e0f2fe; border-color: #38bdf8; }
-        .period-dropzone-cell label { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; }
-        
-        .dropped-current-value { background-color: #e2e8f0; color: var(--main-dark-blue); font-weight: 700; font-size: 0.85rem; padding: 6px 4px; border-radius: 4px; width: 100%; text-align: center; border: 1px solid #cbd5e1; }
-        .dropped-current-value.val-empty { background-color: #f1f5f9; color: #94a3b8; border-style: dashed; font-weight: normal; }
-
-        .subject-block-field { margin-bottom: 20px; }
-        .field-label-text { font-size: 0.95rem; font-weight: 700; color: #475569; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-
-        .btn-pin-action { display: none; background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: 600; white-space: nowrap; }
-        body.edit-mode .btn-pin-action { display: inline-block; }
-        .btn-pin-action.pinned-active { background-color: #cbd5e1; color: var(--text-dark); border-color: #94a3b8; }
-
-        .data-text-viewer { font-size: 0.95rem; color: var(--text-dark); background-color: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; min-height: 44px; line-height: 1.5; word-break: break-word; }
-        
-        .input-editor-textarea, .input-editor-text { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; font-family: inherit; display: none; margin-top: 4px; resize: vertical; }
-
-        .btn-url-downloader { display: inline-flex; align-items: center; gap: 8px; background-color: #0284c7; color: white !important; text-decoration: none !important; padding: 8px 16px; border-radius: 6px; font-weight: 700; font-size: 0.9rem; text-align: center; }
-
-        .file-upload-section {
-            display: none;
-            flex-direction: column;
-            gap: 8px;
-            margin-top: 10px;
-            padding: 12px;
-            background-color: #f8fafc;
-            border: 1px dashed #cbd5e1;
-            border-radius: 8px;
-        }
-        body.edit-mode .file-upload-section { display: flex; }
-
-        .file-upload-label {
-            font-size: 0.85rem;
-            color: #475569;
-            font-weight: 700;
-            margin-bottom: 2px;
-        }
-
-        .file-upload-controls {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .btn-choose-file {
-            background-color: var(--main-dark-blue);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: opacity 0.2s;
-        }
-        .btn-choose-file:hover { opacity: 0.85; }
-        .btn-choose-file:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .file-upload-status {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            flex: 1;
-            min-width: 120px;
-        }
-
-        .file-upload-progress-wrap {
-            height: 8px;
-            background: #e2e8f0;
-            border-radius: 4px;
-            overflow: hidden;
-            display: none;
-            margin-top: 4px;
-        }
-        .file-upload-progress-bar {
-            height: 100%;
-            background: #10b981;
-            width: 0%;
-            transition: width 0.3s ease;
+        ::-webkit-scrollbar-thumb {
+            background: rgba(51, 65, 85, 0.8);
             border-radius: 4px;
         }
-
-        .or-divider {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #94a3b8;
-            font-size: 0.8rem;
-            font-weight: 700;
-            margin: 6px 0;
-        }
-        .or-divider::before, .or-divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: #e2e8f0;
-        }
-
-        /* ====== محرر الملفات المتعددة ====== */
-        .summaries-editor { display: none; margin-top: 8px; }
-        body.edit-mode .summaries-editor { display: block; }
-
-        .file-entries-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
-
-        .file-entry-card {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .file-entry-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-        }
-
-        .file-entry-name-input {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 0.95rem;
-            font-family: inherit;
-            font-weight: 600;
-            color: var(--main-dark-blue);
-        }
-        .file-entry-name-input:focus { outline: none; border-color: var(--main-dark-blue); }
-
-        .btn-remove-entry {
-            background: #fee2e2;
-            color: #dc2626;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 700;
-            flex-shrink: 0;
-            transition: background 0.2s;
-        }
-        .btn-remove-entry:hover { background: #fca5a5; }
-
-        .file-entry-url-input {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-family: inherit;
-            color: var(--text-dark);
-            direction: ltr;
-            text-align: left;
-        }
-        .file-entry-url-input:focus { outline: none; border-color: var(--main-dark-blue); }
-
-        .file-entry-upload-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .btn-entry-upload {
-            background-color: var(--main-dark-blue);
-            color: white;
-            border: none;
-            padding: 7px 14px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 0.85rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            white-space: nowrap;
-        }
-        .btn-entry-upload:hover { opacity: 0.85; }
-        .btn-entry-upload:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .entry-upload-status { font-size: 0.82rem; color: var(--text-muted); flex: 1; min-width: 100px; }
-
-        .entry-progress-wrap {
-            height: 5px;
-            background: #e2e8f0;
-            border-radius: 3px;
-            overflow: hidden;
-            display: none;
-        }
-        .entry-progress-bar {
-            height: 100%;
-            background: #10b981;
-            width: 0%;
-            transition: width 0.3s;
-            border-radius: 3px;
-        }
-
-        .btn-add-summary-entry {
-            width: 100%;
-            padding: 10px;
-            background: white;
-            border: 2px dashed #cbd5e1;
-            border-radius: 8px;
-            color: var(--main-dark-blue);
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn-add-summary-entry:hover { background: #f1f5f9; border-color: var(--main-dark-blue); }
-
-        /* عرض الملفات للمستخدم */
-        .summary-files-display { display: flex; flex-direction: column; gap: 8px; }
-        .summary-file-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background-color: #0284c7;
-            color: white !important;
-            text-decoration: none !important;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            width: fit-content;
-        }
-        .summary-file-link:hover { background-color: #0369a1; }
-
-        .admin-sticky-footer { display: none; justify-content: flex-end; gap: 10px; background-color: white; padding: 12px 20px; border-top: 3px solid var(--main-dark-blue); position: sticky; bottom: 0; z-index: 90; flex-wrap: wrap; }
-        body.edit-mode .admin-sticky-footer { display: flex; }
-
-        .btn-action { padding: 8px 18px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
-        .btn-save { background-color: #10b981; color: white; }
-        .btn-cancel { background-color: #64748b; color: white; }
-
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.6); display: flex; justify-content: center; align-items: center; z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.2s; padding: 20px; }
-        .modal-overlay.show { opacity: 1; pointer-events: auto; }
-        .modal-window { background-color: white; padding: 25px; border-radius: 12px; width: 100%; max-width: 360px; text-align: center; }
-        .modal-window input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; text-align: center; margin: 15px 0; font-size: 1.1rem; }
-
-        .platform-footer { background-color: #0f172a; color: #94a3b8; text-align: center; padding: 20px; font-size: 0.85rem; border-top: 1px solid #1e293b; line-height: 1.6; }
-        .platform-footer span { color: var(--accent-gold); font-weight: 700; }
-
-        @media (max-width: 768px) {
-            .top-meta-bar { justify-content: center; text-align: center; font-size: 0.75rem; }
-            .brand-text-titles h1 { font-size: 1.3rem; }
-            .brand-text-titles p { font-size: 0.75rem; }
-            .platform-header { padding: 20px 15px; justify-content: center; text-align: center; flex-direction: column; }
-            .header-brand-wrapper { flex-direction: column; text-align: center; }
-            .btn-top-admin-trigger { width: 100%; }
-            .summary-row-item { flex-direction: column; align-items: flex-start; gap: 10px; }
-            .summary-right-side { width: 100%; }
-            .schedule-cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); } 
-            .mini-schedule-card { max-width: 100%; }
-            .btn-action { flex: 1; text-align: center; font-size: 0.85rem; padding: 10px; }
-            .admin-sticky-footer { justify-content: center; gap: 6px; padding: 10px; }
-            .timeline-navigation-ribbon { justify-content: center; gap: 12px; }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(16, 185, 129, 0.5);
         }
     </style>
 </head>
-<body>
+<body class="p-3 sm:p-6 pb-20">
 
-<div class="top-meta-bar">
-    <div class="academic-year">العام الدراسي: 2025 / 2026</div>
-    <div class="current-date" id="live-date-header">جاري تحميل التاريخ...</div>
-</div>
+    <!-- Auth View (Shown when not logged in) -->
+    <div id="auth-container" class="max-w-md mx-auto mt-12 sm:mt-20 space-y-6">
+        <div class="glass-card rounded-3xl p-8 text-center shadow-2xl relative overflow-hidden">
+            <div class="absolute -right-12 -top-12 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -left-12 -bottom-12 w-40 h-40 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
-<header class="platform-header">
-    <div class="header-brand-wrapper">
-        <div class="brand-logo-circle">م</div>
-        <div class="brand-text-titles">
-            <h1>بوابة المدرسة التعليمية</h1>
-            <p>منصة متابعة الواجبات والمشاريع والملخصات لجميع المواد الدراسية</p>
-        </div>
-    </div>
-    <button id="admin-trigger-btn" class="btn-top-admin-trigger" onclick="openAuthModal()">تعديل</button>
-</header>
-
-<nav class="platform-navigation" id="navigation-root-tabs"></nav>
-
-<div class="announcement-banner-bar" id="global-announcement-bar">
-    <div class="announcement-display-text" id="announcement-text-view">📢 لا توجد مستجدات معلنة حالياً.</div>
-    <input type="text" class="announcement-input-field" id="announcement-text-input" placeholder="اكتب هنا الإعلان العام الذي تريد توجيهه للمستخدمين...">
-</div>
-
-<main class="main-content-container">
-    
-    <div class="schedule-status-tag" id="day-status-tag">📋 جدول اليوم نشط</div>
-
-    <div class="timeline-navigation-ribbon">
-        <button id="nav-day-prev" class="timeline-btn" onclick="offsetViewingDate(-1)">← اليوم السابق</button>
-        <div class="timeline-center-control">
-            <span class="timeline-date-display" id="timeline-active-date-text">...</span>
-            <input type="date" class="timeline-date-picker" id="timeline-inline-picker" onchange="jumpToDirectDate(this.value)">
-            <button id="nav-day-today" class="btn-reset-today" onclick="resetToCurrentActualDate()">اليوم الحالي</button>
-        </div>
-        <button id="nav-day-next" class="timeline-btn" onclick="offsetViewingDate(1)">اليوم التالي →</button>
-    </div>
-
-    <div id="top-pinned-notes-grid" class="outside-pinned-notes-grid"></div>
-
-    <div class="content-card-panel">
-        
-        <div id="view-pane-home" class="view-pane-segment active-pane">
+            <div class="w-16 h-16 bg-gradient-to-tr from-emerald-500 to-teal-400 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl text-slate-900 shadow-lg shadow-emerald-500/30">
+                <i class="fa-solid fa-dumbbell"></i>
+            </div>
             
-            <div class="panel-main-title">الموجز الدراسي اليومي</div>
-            
-            <div id="summary-cards-stack-target" class="summary-rows-stack">
-                جاري مزامنة محتويات المنصة الدراسية...
+            <h1 class="text-2xl font-extrabold text-white mb-1">منصة Workout Pro</h1>
+            <p class="text-xs text-slate-400 mb-6">سجل دخولك أو أنشئ حساباً لمتابعة التمارين والمنافسة</p>
+
+            <!-- Tabs -->
+            <div class="flex bg-slate-900/80 p-1 rounded-xl mb-6 border border-slate-800">
+                <button id="tab-login-btn" onclick="switchAuthTab('login')" class="flex-1 py-2 text-xs font-bold rounded-lg text-emerald-400 bg-slate-800 transition-all">تسجيل الدخول</button>
+                <button id="tab-signup-btn" onclick="switchAuthTab('signup')" class="flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition-all">حساب جديد</button>
             </div>
 
-            <div class="daily-schedule-section-title">الجدول الدراسي لليوم</div>
-            <div id="daily-schedule-cards-grid" class="schedule-cards-grid"></div>
-
-            <button class="btn-toggle-schedule-panel" onclick="toggleSchedulePanel()">⚙️ تعديل ترتيب جدول الحصص الأسبوعي</button>
-
-            <div class="admin-schedule-manager-panel" id="schedule-manager-drawer" style="display: none;">
-                <div class="subjects-bank-palette">
-                    <div class="palette-title">قم بسحب المادة وإفلاتها داخل خانة الحصة المطلوبة:</div>
-                    <div class="draggable-items-pool" id="subjects-palette-pool">
-                        <div class="draggable-subject-card" draggable="true" ondragstart="handleCardDragStart(event)">رياضيات</div>
-                        <div class="draggable-subject-card" draggable="true" ondragstart="handleCardDragStart(event)">احياء</div>
-                        <div class="draggable-subject-card" draggable="true" ondragstart="handleCardDragStart(event)">انجليزي</div>
-                        <div class="draggable-subject-card" draggable="true" ondragstart="handleCardDragStart(event)">كيمياء</div>
-                        <div class="draggable-subject-card" draggable="true" ondragstart="handleCardDragStart(event)">توحيد</div>
-                        <div class="draggable-subject-card" draggable="true" ondragstart="handleCardDragStart(event)">فنون</div>
-                        <div class="draggable-subject-card" draggable="true" ondragstart="handleCardDragStart(event)">تقنيه رقميه</div>
-                        <div class="draggable-subject-card" draggable="true" ondragstart="handleCardDragStart(event)">بدنيه</div>
-                        <div class="draggable-subject-card unscheduled-card" draggable="true" ondragstart="handleCardDragStart(event)">غير مجدول</div>
+            <!-- Login / Signup Form -->
+            <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-4 text-right">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">اسم المستخدم</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user absolute right-3 top-3.5 text-slate-500 text-xs"></i>
+                        <input type="text" id="auth-username" required placeholder="أدخل اسمك" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl pr-9 pl-3 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition-all">
                     </div>
                 </div>
 
-                <div id="schedule-editor-rows-container"></div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">كلمة السر</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-lock absolute right-3 top-3.5 text-slate-500 text-xs"></i>
+                        <input type="password" id="auth-password" required placeholder="••••••••" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl pr-9 pl-3 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition-all">
+                    </div>
+                </div>
+
+                <div id="auth-error" class="hidden text-xs text-rose-400 bg-rose-500/10 p-2.5 rounded-lg text-center border border-rose-500/20"></div>
+
+                <button type="submit" id="auth-submit-btn" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-slate-950 font-bold py-3 rounded-xl transition-all shadow-lg shadow-emerald-500/25 mt-2">
+                    دخول
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Container (Hidden initially) -->
+    <div id="app-container" class="hidden max-w-5xl mx-auto space-y-6">
+
+        <!-- Top Navigation / User Info Bar -->
+        <nav class="glass-card rounded-2xl p-4 flex flex-wrap justify-between items-center gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center font-bold text-lg">
+                    <i class="fa-solid fa-user-ninja"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h2 id="user-display-name" class="font-extrabold text-white text-base">اسم المستخدم</h2>
+                        <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] px-2 py-0.5 rounded-full font-bold">لاعب تضخيم</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400">جدول تمارين 15-20 دقيقة (وزن 42 كجم / 17 سنة)</p>
+                </div>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="flex items-center gap-2">
+                <button onclick="switchView('tracker')" id="nav-tracker-btn" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 transition-all flex items-center gap-1.5 shadow-md">
+                    <i class="fa-solid fa-calendar-check"></i> تمارين الأسبوع
+                </button>
+                <button onclick="switchView('leaderboard')" id="nav-leaderboard-btn" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-trophy text-amber-400"></i> المشاركون والإنجاز
+                </button>
+                <button onclick="logout()" class="p-2.5 rounded-xl bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 transition-all border border-slate-700/50" title="تسجيل الخروج">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- VIEW 1: Tracker & Workout Management -->
+        <div id="view-tracker" class="space-y-6">
+            
+            <!-- Progress Summary Card -->
+            <div class="glass-card rounded-2xl p-5 shadow-xl relative overflow-hidden">
+                <div class="flex justify-between items-center mb-3">
+                    <div>
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-chart-line text-emerald-400"></i> الإنجاز الكلي للأسبوع
+                        </h3>
+                        <p class="text-xs text-slate-400">ينعكس التحديث فورياً لكل التمارين المنفذة</p>
+                    </div>
+                    <div class="text-left">
+                        <span id="overall-percentage" class="text-2xl font-black text-emerald-400">0%</span>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-800/80 rounded-full h-3.5 p-0.5 border border-slate-700/60 overflow-hidden">
+                    <div id="overall-progress-bar" class="bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+
+                <!-- Metrics footer -->
+                <div class="flex justify-between items-center text-xs text-slate-400 mt-4 pt-3 border-t border-slate-800/80">
+                    <div class="flex gap-4">
+                        <span><i class="fa-solid fa-circle text-emerald-400 text-[9px] ml-1"></i> تم الإنجاز: <strong id="cnt-success" class="text-white font-bold">0</strong></span>
+                        <span><i class="fa-solid fa-circle text-rose-500 text-[9px] ml-1"></i> لم ينفذ: <strong id="cnt-failed" class="text-white font-bold">0</strong></span>
+                        <span><i class="fa-solid fa-circle text-slate-500 text-[9px] ml-1"></i> متبقي: <strong id="cnt-pending" class="text-white font-bold">0</strong></span>
+                    </div>
+                    <button onclick="resetWeekProgress()" class="text-xs text-slate-400 hover:text-rose-400 transition-colors flex items-center gap-1 underline">
+                        <i class="fa-solid fa-rotate-right"></i> صفر الأسبوع
+                    </button>
+                </div>
+            </div>
+
+            <!-- Days List Accordion -->
+            <div id="days-container" class="space-y-4">
+                <!-- Days inserted dynamically -->
             </div>
 
         </div>
 
-        <div id="subject-panes-dynamic-container"></div>
+        <!-- VIEW 2: Shared Community / Leaderboard -->
+        <div id="view-leaderboard" class="hidden space-y-6">
+            <div class="glass-card rounded-2xl p-6 text-center">
+                <div class="w-12 h-12 bg-amber-500/20 border border-amber-500/40 text-amber-400 rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl">
+                    <i class="fa-solid fa-crown"></i>
+                </div>
+                <h2 class="text-xl font-bold text-white mb-1">لوحة إنجازات المتدربين</h2>
+                <p class="text-xs text-slate-400">قائمة بكل الأشخاص المسجلين وتتبع تقدمهم الرياضي في هذا المتصفح/الجهاز</p>
+            </div>
+
+            <div id="leaderboard-list" class="space-y-3">
+                <!-- Leaderboard items inserted dynamically -->
+            </div>
+        </div>
 
     </div>
-</main>
 
-<footer class="admin-sticky-footer">
-    <button class="btn-action btn-cancel" onclick="cancelEditingSession()">إلغاء</button>
-    <button class="btn-action btn-save" onclick="saveEditsToCloud()">حفظ التعديلات</button>
-</footer>
+    <!-- MODAL: Add / Edit Exercise -->
+    <div id="modal-exercise" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+        <div class="glass-modal rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl relative">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 id="modal-title" class="text-lg font-bold text-white">إضافة تمرين جديد</h3>
+                <button onclick="closeExerciseModal()" class="text-slate-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
 
-<footer class="platform-footer">
-    المؤسسة التعليمية | العام الدراسي 2025/2026 | منصة متابعة الواجبات والمشاريع <br>
-    جميع الحقوق محفوظة © تم التطوير بواسطة <span>zyad ashry</span>
-</footer>
+            <form onsubmit="saveExercise(event)" class="space-y-4 text-right">
+                <input type="hidden" id="modal-day-id">
+                <input type="hidden" id="modal-exercise-id">
 
-<div class="modal-overlay" id="security-modal-overlay" onclick="if(event.target.id === 'security-modal-overlay') closeAuthModal()">
-    <div class="modal-window">
-        <h3>التحقق الأمني للمشرف</h3>
-        <p>يرجى إدخال رمز التحقق السري لتفعيل وضع التعديل</p>
-        <input type="password" id="secret-key-input" placeholder="••••" onkeydown="if(event.key === 'Enter') verifyAdminCredentials()">
-        <div style="display: flex; gap: 10px; justify-content: center;">
-            <button class="btn-action btn-cancel" onclick="closeAuthModal()">إلغاء</button>
-            <button class="btn-action btn-save" style="background-color: var(--main-dark-blue);" onclick="verifyAdminCredentials()">تحقق</button>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">اسم التمرين</label>
+                    <input type="text" id="modal-ex-name" required placeholder="مثال: بوش اب ضيق" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">الجولات والتكرارات (أو التوضيح)</label>
+                    <input type="text" id="modal-ex-reps" required placeholder="مثال: 3 جولات × 12 تكرار" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeExerciseModal()" class="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 hover:text-white text-xs font-bold">إلغاء</button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-xs font-bold shadow-lg shadow-emerald-500/20">حفظ التمرين</button>
+                </div>
+            </form>
         </div>
     </div>
-</div>
 
-<script>
-    const FIREBASE_DB_URL = "https://school-dashboard-4a36d-default-rtdb.firebaseio.com";
-    const GOFILE_API_SERVERS = "https://api.gofile.io/servers";
-    
-    const KEYS_CONFIG = {
-        "MASTER": "9561",
-        "SUBJECTS": {
-            "رياضيات": "1111",
-            "احياء": "2222",
-            "انجليزي": "3333",
-            "كيمياء": "4444",
-            "توحيد": "5555",
-            "فنون": "6666",
-            "تقنيه رقميه": "7777",
-            "بدنيه": "8888"
-        }
-    };
-
-    let WEEKLY_SCHEDULE_MAP = {
-        "الأحد": ["تقنيه رقميه", "انجليزي", "كيمياء", "فنون", "رياضيات", "بدنيه", "غير مجدول"],
-        "الإثنين": ["انجليزي", "كيمياء", "تقنيه رقميه", "احياء", "رياضيات", "توحيد", "غير مجدول"],
-        "الثلاثاء": ["تقنيه رقميه", "احياء", "فنون", "انجليزي", "رياضيات", "كيمياء", "غير مجدول"],
-        "الأربعاء": ["رياضيات", "انجليزي", "احياء", "كيمياء", "تقنيه رقميه", "غير مجدول", "غير مجدول"],
-        "الخميس": ["انجليزي", "احياء", "كيمياء", "رياضيات", "غير مجدول", "غير مجدول", "غير مجدول"]
-    };
-
-    const DAYS_KEYS = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"];
-    const TOTAL_SUBJECTS_LIST = ["رياضيات", "احياء", "انجليزي", "كيمياء", "توحيد", "فنون", "تقنيه رقميه", "بدنيه"];
-
-    let todayISODate = "";       // تاريخ اليوم الفعلي الثابت للجهاز
-    let viewingISODate = "";     // التاريخ النشط الذي يتصفحه المستخدم حالياً
-    let currentDayName = "";     // اسم اليوم التابع للتاريخ المستعرض حالياً
-    let finalOrderedSubjects = [];
-    let pinnedFieldsState = {}; 
-    let currentAuthScope = null;
-
-    window.addEventListener('DOMContentLoaded', () => {
-        initializeClockSystem();
-        buildScheduleDropzonesStructure(); 
-        setupKeyboardShortcuts();
-        loadMasterData();
-    });
-
-    function initializeClockSystem() {
-        const date = new Date();
-        const days = ["السبت", "الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة"];
-        
-        const y = date.getFullYear();
-        const m = String(date.getMonth() + 1).padStart(2, '0');
-        const d = String(date.getDate()).padStart(2, '0');
-        
-        todayISODate = `${y}-${m}-${d}`;
-        viewingISODate = todayISODate; // في البداية يكون العرض متطابقاً مع تاريخ اليوم
-
-        document.getElementById('live-date-header').innerText = date.toLocaleDateString('ar-SA', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-        syncTimelineLabelsAndLayout();
-    }
-
-    // لتحديث النصوص والتقويم وجدول الحصص بناءً على التاريخ المستعرض حالياً
-    function syncTimelineLabelsAndLayout() {
-        const targetDate = new Date(viewingISODate);
-        const days = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
-        currentDayName = days[targetDate.getDay()];
-
-        // تحديث حقل التقويم وعنوان شريط التنقل
-        document.getElementById('timeline-inline-picker').value = viewingISODate;
-        document.getElementById('timeline-active-date-text').innerText = targetDate.toLocaleDateString('ar-SA', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-
-        // تحديث شارة حالة اليوم
-        const statusTag = document.getElementById('day-status-tag');
-        if (viewingISODate === todayISODate) {
-            statusTag.innerText = `📋 جدول يوم ${currentDayName} نشط (اليوم الحالي)`;
-            statusTag.style.backgroundColor = "#e0f2fe";
-            statusTag.style.color = "#0369a1";
-        } else {
-            statusTag.innerText = `🔍 مستعرض تاريخي: يوم ${currentDayName} (${viewingISODate})`;
-            statusTag.style.backgroundColor = "#ffedd5";
-            statusTag.style.color = "#c2410c";
-        }
-
-        sortSubjectsBySchedule();
-    }
-
-    function offsetViewingDate(daysOffset) {
-        const current = new Date(viewingISODate);
-        current.setDate(current.getDate() + daysOffset);
-        
-        const y = current.getFullYear();
-        const m = String(current.getMonth() + 1).padStart(2, '0');
-        const d = String(current.getDate()).padStart(2, '0');
-        
-        viewingISODate = `${y}-${m}-${d}`;
-        switchViewPane('home');
-        syncTimelineLabelsAndLayout();
-        loadMasterData();
-    }
-
-    function jumpToDirectDate(dateStr) {
-        if (!dateStr) return;
-        viewingISODate = dateStr;
-        switchViewPane('home');
-        syncTimelineLabelsAndLayout();
-        loadMasterData();
-    }
-
-    function resetToCurrentActualDate() {
-        if (viewingISODate === todayISODate) return;
-        viewingISODate = todayISODate;
-        switchViewPane('home');
-        syncTimelineLabelsAndLayout();
-        loadMasterData();
-    }
-
-    function setupKeyboardShortcuts() {
-        window.addEventListener('keydown', (e) => {
-            if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
-            if (e.key === 'ArrowLeft') {
-                offsetViewingDate(-1); // يرجع للخلف يوم واحد
-            } else if (e.key === 'ArrowRight') {
-                offsetViewingDate(1);  // يتقدم للأمام يوم واحد
+    <!-- JavaScript Logic -->
+    <script>
+        // Default Plan Template for New Users
+        const DEFAULT_WORKOUT_PLAN = [
+            {
+                id: 'sat',
+                day: 'السبت',
+                title: 'جزء علوي (دفع وسحب)',
+                isRest: false,
+                exercises: [
+                    { id: 'ex_1', name: 'تمارين بوش اب (Push-ups)', reps: '3 جولات × 8-12 تكرار', status: 0 },
+                    { id: 'ex_2', name: 'تمارين عقلة (Pull-ups)', reps: '3 جولات × أقصى عدد قدر الإمكان', status: 0 },
+                    { id: 'ex_3', name: 'بوش اب الماس (Diamond Push-ups)', reps: '2 جولة × 8 تكرارات (للترايسبس)', status: 0 }
+                ]
+            },
+            {
+                id: 'sun',
+                day: 'الأحد',
+                title: 'جزء سفلي وبطن',
+                isRest: false,
+                exercises: [
+                    { id: 'ex_4', name: 'سكوات بوزن الجسم (Squats)', reps: '3 جولات × 15 تكرار', status: 0 },
+                    { id: 'ex_5', name: 'ثبات بلانك (Plank)', reps: '3 جولات × 30-45 ثانية', status: 0 },
+                    { id: 'ex_6', name: 'تمرينه البطن (Crunches)', reps: '3 جولات × 15 تكرار', status: 0 }
+                ]
+            },
+            {
+                id: 'mon',
+                day: 'الإثنين',
+                title: 'راحة واستشفاء تامة',
+                isRest: true,
+                exercises: [
+                    { id: 'ex_7', name: 'نوم 8 ساعات وتغذية عالي السعرات', reps: 'وجبات غنية بالبروتين والنشويات', status: 0 }
+                ]
+            },
+            {
+                id: 'tue',
+                day: 'الثلاثاء',
+                title: 'جزء علوي (دفع وسحب)',
+                isRest: false,
+                exercises: [
+                    { id: 'ex_8', name: 'بوش اب أرجل مرتفعة (Elevated)', reps: '3 جولات × 10 تكرارات', status: 0 },
+                    { id: 'ex_9', name: 'عقلة قبضة معكوسة (Chin-ups)', reps: '3 جولات × أقصى قدرة (للبايسبس)', status: 0 }
+                ]
+            },
+            {
+                id: 'wed',
+                day: 'الأربعاء',
+                title: 'جزء سفلي وبطن',
+                isRest: false,
+                exercises: [
+                    { id: 'ex_10', name: 'سكوات مع ثبات (Hold Squat)', reps: '3 جولات × 12 تكرار (نزول بطيء)', status: 0 },
+                    { id: 'ex_11', name: 'رفع الأرجل للبطن (Leg Raises)', reps: '3 جولات × 12 تكرار', status: 0 }
+                ]
+            },
+            {
+                id: 'thu',
+                day: 'الخميس',
+                title: 'دورة شاملة سريعة (Full Body)',
+                isRest: false,
+                exercises: [
+                    { id: 'ex_12', name: 'بوش اب + سكوات + عقلة متتالية', reps: '3 دورات سريعة (10 دقائق)', status: 0 }
+                ]
+            },
+            {
+                id: 'fri',
+                day: 'الجمعة',
+                title: 'راحة + قياس الوزن',
+                isRest: true,
+                exercises: [
+                    { id: 'ex_13', name: 'قياس الوزن صباحاً على معدة فارغة', reps: 'تسجيل التقدم والتأكد من الزيادة', status: 0 }
+                ]
             }
-        });
-    }
+        ];
 
-    function buildScheduleDropzonesStructure() {
-        const container = document.getElementById('schedule-editor-rows-container');
-        container.innerHTML = '';
-        const numWords = ["الأولى", "الثانية", "الثالثة", "الرابعة", "الخامسة", "السادسة", "السابعة"];
+        // Global App State
+        let currentUser = null;
+        let authMode = 'login'; // 'login' or 'signup'
 
-        DAYS_KEYS.forEach(day => {
-            const row = document.createElement('div');
-            row.className = 'schedule-day-row-config';
-            let cellsHtml = '';
-            for (let i = 1; i <= 7; i++) {
-                cellsHtml += `
-                    <div class="period-dropzone-cell" ondragover="handleZoneDragOver(event)" ondragleave="handleZoneDragLeave(event)" ondrop="handleCardDrop(event, '${day}', ${i})">
-                        <label>الحصة ${numWords[i-1]}</label>
-                        <div class="dropped-current-value val-empty" id="dropped-val-${day}-${i}">غير مجدول</div>
+        // --- AUTHENTICATION MODULE ---
+
+        function switchAuthTab(mode) {
+            authMode = mode;
+            const loginBtn = document.getElementById('tab-login-btn');
+            const signupBtn = document.getElementById('tab-signup-btn');
+            const submitBtn = document.getElementById('auth-submit-btn');
+
+            if (mode === 'login') {
+                loginBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg text-emerald-400 bg-slate-800 transition-all";
+                signupBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition-all";
+                submitBtn.innerText = "دخول";
+            } else {
+                signupBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg text-emerald-400 bg-slate-800 transition-all";
+                loginBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition-all";
+                submitBtn.innerText = "إنشاء الحساب والبدء";
+            }
+            document.getElementById('auth-error').classList.add('hidden');
+        }
+
+        function getUsersDatabase() {
+            return JSON.parse(localStorage.getItem('workout_app_users')) || {};
+        }
+
+        function saveUsersDatabase(users) {
+            localStorage.setItem('workout_app_users', JSON.stringify(users));
+        }
+
+        function handleAuth(e) {
+            e.preventDefault();
+            const usernameInput = document.getElementById('auth-username').value.trim();
+            const passwordInput = document.getElementById('auth-password').value.trim();
+            const errorEl = document.getElementById('auth-error');
+
+            if (!usernameInput || !passwordInput) {
+                errorEl.innerText = "يرجى تعبئة جميع الحقول";
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            const users = getUsersDatabase();
+
+            if (authMode === 'login') {
+                if (!users[usernameInput] || users[usernameInput].password !== passwordInput) {
+                    errorEl.innerText = "اسم المستخدم أو كلمة السر غير صحيحة";
+                    errorEl.classList.remove('hidden');
+                    return;
+                }
+                loginUser(usernameInput);
+            } else {
+                // Signup Mode
+                if (users[usernameInput]) {
+                    errorEl.innerText = "اسم المستخدم موجود مسبقاً، اختر اسماً آخر";
+                    errorEl.classList.remove('hidden');
+                    return;
+                }
+                
+                // Create new user record
+                users[usernameInput] = {
+                    username: usernameInput,
+                    password: passwordInput,
+                    createdAt: new Date().toISOString(),
+                    plan: JSON.parse(JSON.stringify(DEFAULT_WORKOUT_PLAN)) // Fresh deep copy of default exercises
+                };
+                saveUsersDatabase(users);
+                loginUser(usernameInput);
+            }
+        }
+
+        function loginUser(username) {
+            currentUser = username;
+            localStorage.setItem('workout_app_session', username);
+            document.getElementById('auth-container').classList.add('hidden');
+            document.getElementById('app-container').classList.remove('hidden');
+            document.getElementById('user-display-name').innerText = username;
+            renderAll();
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('workout_app_session');
+            document.getElementById('app-container').classList.add('hidden');
+            document.getElementById('auth-container').classList.remove('hidden');
+            document.getElementById('auth-form').reset();
+        }
+
+        function checkSession() {
+            const activeUser = localStorage.getItem('workout_app_session');
+            if (activeUser) {
+                const users = getUsersDatabase();
+                if (users[activeUser]) {
+                    loginUser(activeUser);
+                    return;
+                }
+            }
+        }
+
+        // --- WORKOUT & DATA MANAGEMENT ---
+
+        function getUserPlan() {
+            const users = getUsersDatabase();
+            if (currentUser && users[currentUser]) {
+                return users[currentUser].plan || DEFAULT_WORKOUT_PLAN;
+            }
+            return DEFAULT_WORKOUT_PLAN;
+        }
+
+        function saveUserPlan(plan) {
+            const users = getUsersDatabase();
+            if (currentUser && users[currentUser]) {
+                users[currentUser].plan = plan;
+                saveUsersDatabase(users);
+            }
+        }
+
+        // Cycle Exercise status: 0 = pending (⬜), 1 = completed (✓), 2 = skipped (✗)
+        function toggleExerciseStatus(dayId, exerciseId) {
+            const plan = getUserPlan();
+            const dayObj = plan.find(d => d.id === dayId);
+            if (!dayObj) return;
+
+            const ex = dayObj.exercises.find(e => e.id === exerciseId);
+            if (!ex) return;
+
+            ex.status = (ex.status + 1) % 3;
+            saveUserPlan(plan);
+            renderAll();
+        }
+
+        function resetWeekProgress() {
+            if (!confirm("هل أنت تأكد من ترقين وإعادة تصفير نتائج هذا الأسبوع؟")) return;
+            const plan = getUserPlan();
+            plan.forEach(day => {
+                day.exercises.forEach(ex => ex.status = 0);
+            });
+            saveUserPlan(plan);
+            renderAll();
+        }
+
+        // --- RENDERERS ---
+
+        function renderAll() {
+            renderTracker();
+            renderLeaderboard();
+        }
+
+        function renderTracker() {
+            const plan = getUserPlan();
+            const daysContainer = document.getElementById('days-container');
+            daysContainer.innerHTML = '';
+
+            let totalExercises = 0;
+            let completedCount = 0;
+            let failedCount = 0;
+            let pendingCount = 0;
+
+            plan.forEach(day => {
+                let dayCompleted = 0;
+                let dayTotal = day.exercises.length;
+
+                let exercisesHtml = '';
+
+                day.exercises.forEach(ex => {
+                    totalExercises++;
+                    if (ex.status === 1) { completedCount++; dayCompleted++; }
+                    else if (ex.status === 2) { failedCount++; }
+                    else { pendingCount++; }
+
+                    // Button styling based on status
+                    let statusBtnClasses = 'bg-slate-800 border-slate-700 text-slate-500 hover:border-slate-500';
+                    let statusIcon = '<i class="fa-regular fa-square"></i>';
+
+                    if (ex.status === 1) {
+                        statusBtnClasses = 'bg-emerald-500/20 border-emerald-500 text-emerald-400 shadow-md shadow-emerald-500/20';
+                        statusIcon = '<i class="fa-solid fa-check"></i>';
+                    } else if (ex.status === 2) {
+                        statusBtnClasses = 'bg-rose-500/20 border-rose-500 text-rose-500 shadow-md shadow-rose-500/20';
+                        statusIcon = '<i class="fa-solid fa-xmark"></i>';
+                    }
+
+                    exercisesHtml += `
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-slate-800/80 hover:border-slate-700 transition-all">
+                            <div class="flex items-center gap-3">
+                                <button onclick="toggleExerciseStatus('${day.id}', '${ex.id}')" aria-label="تغيير حالة التمرين" class="status-btn w-9 h-9 rounded-lg border-2 ${statusBtnClasses} flex items-center justify-center text-sm font-bold shrink-0">
+                                    ${statusIcon}
+                                </button>
+                                <div>
+                                    <h5 class="text-xs font-bold ${ex.status === 1 ? 'line-through text-slate-400' : 'text-slate-100'}">${ex.name}</h5>
+                                    <p class="text-[11px] text-slate-400 mt-0.5">${ex.reps}</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-1 opacity-80 hover:opacity-100">
+                                <button onclick="openExerciseModal('${day.id}', '${ex.id}')" class="p-1.5 text-slate-400 hover:text-emerald-400 text-xs" title="تعديل التمرين">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                                <button onclick="deleteExercise('${day.id}', '${ex.id}')" class="p-1.5 text-slate-400 hover:text-rose-400 text-xs" title="حذف التمرين">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                const dayProgressPercent = dayTotal > 0 ? Math.round((dayCompleted / dayTotal) * 100) : 0;
+
+                const dayCardHtml = `
+                    <div class="glass-card rounded-2xl p-4 sm:p-5 border border-slate-800/80">
+                        <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-3">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold text-xs flex items-center justify-center">
+                                    ${day.day.substring(0, 4)}
+                                </span>
+                                <div>
+                                    <h4 class="font-bold text-white text-sm sm:text-base">${day.day} - <span class="text-slate-300 font-normal">${day.title}</span></h4>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center gap-2">
+                                <span class="text-[11px] font-bold ${dayProgressPercent === 100 ? 'text-emerald-400' : 'text-slate-400'}">${dayCompleted}/${dayTotal} منجز</span>
+                                <button onclick="openExerciseModal('${day.id}')" class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all flex items-center gap-1">
+                                    <i class="fa-solid fa-plus text-[10px]"></i> تمرين
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            ${exercisesHtml}
+                        </div>
                     </div>
                 `;
-            }
-            row.innerHTML = `
-                <div class="schedule-day-title-label"><span class="gray-pin-icon">&#x1F4CC;&#xFE0E;</span> جدول يوم ${day}</div>
-                <div class="periods-inputs-row-grid">${cellsHtml}</div>
-            `;
-            container.appendChild(row);
-        });
-    }
-
-    function toggleSchedulePanel() {
-        const drawer = document.getElementById('schedule-manager-drawer');
-        drawer.style.display = (drawer.style.display === "none" || drawer.style.display === "") ? "block" : "none";
-    }
-
-    function handleCardDragStart(e) { e.dataTransfer.setData("text/plain", e.target.innerText.trim()); }
-    function handleZoneDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-hover'); }
-    function handleZoneDragLeave(e) { e.currentTarget.classList.remove('drag-hover'); }
-    function handleCardDrop(e, day, periodIndex) {
-        e.preventDefault(); e.currentTarget.classList.remove('drag-hover');
-        const subjectName = e.dataTransfer.getData("text/plain");
-        if(subjectName) { updateZoneDisplayValue(day, periodIndex, subjectName); }
-    }
-
-    function updateZoneDisplayValue(day, periodIndex, val) {
-        const displayEl = document.getElementById(`dropped-val-${day}-${periodIndex}`);
-        if(displayEl) {
-            displayEl.innerText = val;
-            if(val === "غير مجدول" || !val) { displayEl.classList.add('val-empty'); }
-            else { displayEl.classList.remove('val-empty'); }
-        }
-    }
-
-    function loadMasterData() {
-        fetch(`${FIREBASE_DB_URL}/cloud_announcement.json`)
-        .then(res => res.json())
-        .then(announcementData => {
-            const bar = document.getElementById('global-announcement-bar');
-            const viewText = document.getElementById('announcement-text-view');
-            const inputField = document.getElementById('announcement-text-input');
-            
-            if(announcementData && announcementData.text && announcementData.text.trim() !== "") {
-                viewText.innerText = `📢 إعلان عام: ${announcementData.text}`;
-                inputField.value = announcementData.text;
-                bar.classList.add('has-content');
-            } else {
-                viewText.innerText = `📢 لا توجد مستجدات معلنة حالياً.`;
-                inputField.value = "";
-                bar.classList.remove('has-content');
-            }
-
-            return fetch(`${FIREBASE_DB_URL}/app_weekly_schedule.json`);
-        })
-        .then(res => res.json())
-        .then(savedSchedule => {
-            if(savedSchedule) { WEEKLY_SCHEDULE_MAP = savedSchedule; }
-            
-            DAYS_KEYS.forEach(day => {
-                const arr = WEEKLY_SCHEDULE_MAP[day] || ["غير مجدول", "غير مجدول", "غير مجدول", "غير مجدول", "غير مجدول", "غير مجدول", "غير مجدول"];
-                for(let i = 1; i <= 7; i++) { updateZoneDisplayValue(day, i, arr[i-1] || "غير مجدول"); }
+                daysContainer.insertAdjacentHTML('beforeend', dayCardHtml);
             });
 
-            syncTimelineLabelsAndLayout();
-            generateNavigationTabs();
-            generateSubjectMarkupPanes();
-            fetchCloudDataAndRender();
-        });
-    }
-
-    function sortSubjectsBySchedule() {
-        const todaySchedule = WEEKLY_SCHEDULE_MAP[currentDayName] || [];
-        const uniqueTodaySchedule = [...new Set(todaySchedule.filter(s => s && s.trim() !== "" && s.trim() !== "غير مجدول"))];
-        
-        finalOrderedSubjects = [...uniqueTodaySchedule];
-        TOTAL_SUBJECTS_LIST.forEach(sub => { if (!finalOrderedSubjects.includes(sub)) finalOrderedSubjects.push(sub); });
-    }
-
-    function generateNavigationTabs() {
-        const container = document.getElementById('navigation-root-tabs');
-        container.innerHTML = '';
-
-        const homeTab = document.createElement('div');
-        homeTab.className = 'nav-link-tab active-tab';
-        homeTab.id = 'tab-link-home';
-        homeTab.innerText = 'الرئيسية';
-        homeTab.onclick = () => switchViewPane('home');
-        container.appendChild(homeTab);
-
-        const todaySchedule = WEEKLY_SCHEDULE_MAP[currentDayName] || [];
-        const uniqueTodaySchedule = [...new Set(todaySchedule.filter(s => s && s.trim() !== "" && s.trim() !== "غير مجدول"))];
-
-        finalOrderedSubjects.forEach(sub => {
-            const tab = document.createElement('div');
-            tab.id = `tab-link-${sub}`;
-            
-            if (uniqueTodaySchedule.includes(sub)) { 
-                tab.className = 'nav-link-tab';
-                tab.innerHTML = `${sub} <span class="active-dot"></span>`; 
-            } else { 
-                tab.className = 'nav-link-tab unscheduled-tab'; 
-                tab.innerText = sub; 
-            }
-            
-            tab.onclick = () => switchViewPane(sub);
-            container.appendChild(tab);
-        });
-    }
-
-    function generateSubjectMarkupPanes() {
-        const container = document.getElementById('subject-panes-dynamic-container');
-        container.innerHTML = '';
-
-        finalOrderedSubjects.forEach(sub => {
-            const pane = document.createElement('div');
-            pane.id = `view-pane-${sub}`;
-            pane.className = 'view-pane-segment';
-
-            pane.innerHTML = `
-                <div class="panel-main-title">${sub}</div>
-                
-                <div class="subject-block-field">
-                    <div class="field-label-text">الواجبات المدرسية والمهام</div>
-                    <div class="data-text-viewer" id="preview-${sub}-assignments">لا يوجد محتوى مسجل.</div>
-                    <textarea class="input-editor-textarea scope-target-${sub}" id="input-${sub}-assignments" placeholder="اكتب تفاصيل الواجبات والمهام..."></textarea>
-                </div>
-
-                <div class="subject-block-field">
-                    <div class="field-label-text">
-                        <span>المشاريع والأعمال الأدائية</span>
-                        <button class="btn-pin-action scope-target-${sub}" id="pin-${sub}-projects" onclick="togglePin('${sub}', 'projects')"><span class="gray-pin-icon">&#x1F4CC;&#xFE0E;</span> تثبيت</button>
-                    </div>
-                    <div class="data-text-viewer" id="preview-${sub}-projects">لا يوجد محتوى مسجل.</div>
-                    <textarea class="input-editor-textarea scope-target-${sub}" id="input-${sub}-projects" placeholder="اكتب تفاصيل المشاريع..."></textarea>
-                </div>
-
-                <div class="subject-block-field">
-                    <div class="field-label-text">الملخصات والمرفقات</div>
-                    <div class="data-text-viewer" id="preview-${sub}-summaries"><span class="summary-empty-text">لا يوجد محتوى مسجل</span></div>
-                    <div class="summaries-editor" id="editor-${sub}-summaries">
-                        <div class="file-entries-list" id="files-list-${sub}"></div>
-                        <button class="btn-add-summary-entry" onclick="addSummaryEntry('${sub}')">➕ إضافة ملف أو رابط</button>
-                    </div>
-                </div>
-
-                <div class="subject-block-field">
-                    <div class="field-label-text">
-                        <span>ملاحظات وتنبيهات مخصصة</span>
-                        <button class="btn-pin-action scope-target-${sub}" id="pin-${sub}-notes" onclick="togglePin('${sub}', 'notes')"><span class="gray-pin-icon">&#x1F4CC;&#xFE0E;</span> تثبيت</button>
-                    </div>
-                    <div class="data-text-viewer" id="preview-${sub}-notes">لا يوجد محتوى مسجل.</div>
-                    <textarea class="input-editor-textarea scope-target-${sub}" id="input-${sub}-notes" placeholder="اكتب الملاحظات والتنبيهات هنا..."></textarea>
-                </div>
-            `;
-            container.appendChild(pane);
-        });
-    }
-
-    function togglePin(sub, field) {
-        const btn = document.getElementById(`pin-${sub}-${field}`);
-        const key = `${sub}_${field}`;
-        if (pinnedFieldsState[key]) {
-            pinnedFieldsState[key] = false;
-            btn.classList.remove('pinned-active');
-            btn.innerHTML = '<span class="gray-pin-icon">&#x1F4CC;&#xFE0E;</span> تثبيت';
-        } else {
-            pinnedFieldsState[key] = true;
-            btn.classList.add('pinned-active');
-            btn.innerHTML = '<span class="gray-pin-icon">&#x1F4CC;&#xFE0E;</span> مثبت دائم';
+            // Update Statistics Summary Header
+            const overallPercent = totalExercises > 0 ? Math.round((completedCount / totalExercises) * 100) : 0;
+            document.getElementById('overall-percentage').innerText = `${overallPercent}%`;
+            document.getElementById('overall-progress-bar').style.width = `${overallPercent}%`;
+            document.getElementById('cnt-success').innerText = completedCount;
+            document.getElementById('cnt-failed').innerText = failedCount;
+            document.getElementById('cnt-pending').innerText = pendingCount;
         }
-    }
 
-    function switchViewPane(targetId) {
-        document.querySelectorAll('.nav-link-tab').forEach(el => el.classList.remove('active-tab'));
-        document.querySelectorAll('.view-pane-segment').forEach(el => el.classList.remove('active-pane'));
+        function renderLeaderboard() {
+            const users = getUsersDatabase();
+            const leaderboardList = document.getElementById('leaderboard-list');
+            leaderboardList.innerHTML = '';
 
-        if (targetId === 'home') {
-            document.getElementById('tab-link-home').classList.add('active-tab');
-            document.getElementById('view-pane-home').classList.add('active-pane');
-        } else {
-            if(document.getElementById(`tab-link-${targetId}`)) document.getElementById(`tab-link-${targetId}`).classList.add('active-tab');
-            if(document.getElementById(`view-pane-${targetId}`)) document.getElementById(`view-pane-${targetId}`).classList.add('active-pane');
-        }
-    }
+            const userStats = [];
 
-    function fetchCloudDataAndRender() {
-        fetch(`${FIREBASE_DB_URL}/pinned_data.json`)
-        .then(res => res.json())
-        .then(pinnedData => {
-            pinnedFieldsState = {};
-            if(pinnedData) { Object.keys(pinnedData).forEach(k => { pinnedFieldsState[k] = pinnedData[k].isPinned || false; }); }
+            Object.keys(users).forEach(uname => {
+                const plan = users[uname].plan || [];
+                let total = 0;
+                let completed = 0;
 
-            // يتم الجلب ديناميكياً من حقل التاريخ المختار حالياً لتفعيل التصفح الزمني والتراجع
-            fetch(`${FIREBASE_DB_URL}/${viewingISODate}.json`)
-            .then(r => r.json())
-            .then(todayData => {
-                TOTAL_SUBJECTS_LIST.forEach(sub => {
-                    const fields = ['assignments', 'projects', 'notes'];
-                    fields.forEach(f => {
-                        const viewEl = document.getElementById(`preview-${sub}-${f}`);
-                        const inputEl = document.getElementById(`input-${sub}-${f}`);
-                        const pinBtn = document.getElementById(`pin-${sub}-${f}`);
-                        const pinKey = `${sub}_${f}`;
-                        const isPinned = pinnedFieldsState[pinKey] || false;
-
-                        if(pinBtn) {
-                            if(isPinned) { pinBtn.classList.add('pinned-active'); pinBtn.innerHTML = '<span class="gray-pin-icon">&#x1F4CC;&#xFE0E;</span> مثبت دائم'; }
-                            else { pinBtn.classList.remove('pinned-active'); pinBtn.innerHTML = '<span class="gray-pin-icon">&#x1F4CC;&#xFE0E;</span> تثبيت'; }
-                        }
-
-                        let value = "";
-                        if (isPinned && pinnedData && pinnedData[pinKey]) value = pinnedData[pinKey].value ? pinnedData[pinKey].value.trim() : "";
-                        else if (todayData && todayData[sub] && todayData[sub][f]) value = todayData[sub][f].trim();
-
-                        if(inputEl) inputEl.value = value;
-
-                        if(viewEl) {
-                            if(!value) viewEl.innerHTML = `<span class="summary-empty-text">لا يوجد محتوى مسجل</span>`;
-                            else viewEl.innerHTML = isPinned ? `<span class="gray-pin-icon">&#x1F4CC;&#xFE0E;</span> ${value}` : value;
-                        }
+                plan.forEach(day => {
+                    day.exercises.forEach(ex => {
+                        total++;
+                        if (ex.status === 1) completed++;
                     });
-
-                    // تحميل الملفات المتعددة للملخصات
-                    let filesData = [];
-                    const rawSummaries = todayData && todayData[sub] && todayData[sub]['summaries'];
-                    if (rawSummaries) {
-                        if (typeof rawSummaries === 'string') {
-                            // توافق مع البيانات القديمة (رابط واحد)
-                            try { filesData = JSON.parse(rawSummaries); }
-                            catch(e) { filesData = rawSummaries ? [{name: 'ملخص', url: rawSummaries}] : []; }
-                        } else if (Array.isArray(rawSummaries)) {
-                            filesData = rawSummaries;
-                        }
-                    }
-                    initSummariesEditor(sub, filesData);
-                    renderSummariesPreview(sub, filesData);
                 });
-                buildProfessionalSummary();
-                buildScheduleCards();
-                if (document.body.classList.contains('edit-mode')) {
-                    reapplyEditMode();
-                }
+
+                const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+                userStats.push({ username: uname, completed, total, percentage });
             });
-        });
-    }
 
-    function buildProfessionalSummary() {
-        const display = document.getElementById('summary-cards-stack-target');
-        const gridNotesContainer = document.getElementById('top-pinned-notes-grid');
-        const todaySchedule = WEEKLY_SCHEDULE_MAP[currentDayName] || [];
-        const validTodaySchedule = todaySchedule.filter(s => s && s.trim() !== "" && s.trim() !== "غير مجدول");
+            // Sort by highest percentage
+            userStats.sort((a, b) => b.percentage - a.percentage);
 
-        let summaryHtml = ''; let pinnedCardsHtml = ''; let hasPinnedNotes = false;
-        let totalActiveDataEntries = 0; // لحساب إذا كان اليوم فارغاً تماماً بجميع مواده
+            userStats.forEach((stat, index) => {
+                let badgeColor = 'bg-slate-800 text-slate-400 border-slate-700';
+                let rankIcon = `#${index + 1}`;
 
-        TOTAL_SUBJECTS_LIST.forEach(subject => {
-            const notes = document.getElementById(`input-${subject}-notes`).value.trim();
-            const isNotePinned = pinnedFieldsState[`${subject}_notes`] || false;
-            if (notes && isNotePinned) {
-                hasPinnedNotes = true;
-                pinnedCardsHtml += `
-                    <div class="pinned-note-box-item">
-                        <span class="gray-pin-icon">&#x1F4CC;&#xFE0E;</span>
-                        <div><strong style="display:block; margin-bottom:4px; color:#475569;">${subject}</strong><span>${notes}</span></div>
-                    </div>`;
-            }
-        });
+                if (index === 0) {
+                    badgeColor = 'bg-amber-500/20 text-amber-400 border-amber-500/40';
+                    rankIcon = '<i class="fa-solid fa-trophy"></i>';
+                } else if (index === 1) {
+                    badgeColor = 'bg-slate-300/20 text-slate-200 border-slate-300/40';
+                } else if (index === 2) {
+                    badgeColor = 'bg-amber-700/20 text-amber-600 border-amber-700/40';
+                }
 
-        if (hasPinnedNotes) { gridNotesContainer.innerHTML = pinnedCardsHtml; gridNotesContainer.style.display = 'grid'; }
-        else { gridNotesContainer.style.display = 'none'; }
+                const itemHtml = `
+                    <div class="glass-card rounded-xl p-4 flex items-center justify-between ${stat.username === currentUser ? 'border-2 border-emerald-500/60 bg-emerald-950/10' : ''}">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl border ${badgeColor} flex items-center justify-center font-bold text-xs">
+                                ${rankIcon}
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white text-sm flex items-center gap-2">
+                                    ${stat.username}
+                                    ${stat.username === currentUser ? '<span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded">أنت</span>' : ''}
+                                </h4>
+                                <p class="text-[11px] text-slate-400">أنجز ${stat.completed} من أصل ${stat.total} تمرين</p>
+                            </div>
+                        </div>
 
-        // التحقق من وجود أي محتوى مسجل باليوم لتجنب اعتبار الأيام التي بها ملخصات في الإجازة فارغة
-        TOTAL_SUBJECTS_LIST.forEach(sub => {
-            if(document.getElementById(`input-${sub}-assignments`).value.trim() || 
-               collectSummariesFromEditor(sub).length > 0 || 
-               document.getElementById(`input-${sub}-projects`).value.trim()) {
-                totalActiveDataEntries++;
-            }
-        });
-
-        // إذا كان اليوم عطلة نهاية أسبوع ولا يحتوي على أي ملخصات مرفوعة مطلقاً
-        if (validTodaySchedule.length === 0 && totalActiveDataEntries === 0) {
-            display.innerHTML = `
-                <div class="empty-state-container">
-                    <div class="empty-state-title">لا يوجد ملخص لهذا اليوم</div>
-                    <p>إجازة نهاية الأسبوع، أو يوم حر لم يتم إدراج واجبات أو ملخصات فيه بعد.</p>
-                    <button class="btn-create-summary-placeholder" onclick="openAuthModal()">إنشاء ملخص لهذا اليوم</button>
-                </div>`;
-            return;
-        }
-
-        // إذا لم يكن هناك جدول حصص لكن المشرف أضاف ملخصات، نعتمد قائمة المواد التي تحتوي على بيانات فقط لتعرض للطلاب
-        const targetListToRender = (validTodaySchedule.length > 0) ? [...new Set(validTodaySchedule)] : TOTAL_SUBJECTS_LIST;
-
-        let renderedCardsCount = 0;
-        targetListToRender.forEach((subject, index) => {
-            const assign = document.getElementById(`input-${subject}-assignments`).value.trim();
-            const summaryFiles = collectSummariesFromEditor(subject);
-            const urlLink = summaryFiles.length > 0 ? summaryFiles[0].url : "";
-            const projectVal = document.getElementById(`input-${subject}-projects`).value.trim();
-            const isProjectPinned = pinnedFieldsState[`${subject}_projects`] || false;
-
-            // إذا كنا في وضع الإجازة لا نعرض المواد الفارغة، بل فقط المواد التي جهز المعلم ملخصاتها
-            if(validTodaySchedule.length === 0 && !assign && !urlLink && !projectVal) return;
-
-            renderedCardsCount++;
-            let details = "";
-            if (assign) details = assign;
-            else if (urlLink) details = `يتوفر ملخص مرفق للمادة (اضغط على اسم المادة لفتحه)`;
-            else if (projectVal) details = `${isProjectPinned ? '<span class="gray-pin-icon">&#x1F4CC;&#xFE0E;</span> ' : ''}مشروع قائم: ${projectVal}`;
-            else details = `<span class="summary-empty-text">(لا يوجد واجبات أو ملخصات مسجلة)</span>`;
-
-            summaryHtml += `
-                <div class="summary-row-item">
-                    <div class="summary-right-side">
-                        <div class="summary-index-circle">${renderedCardsCount}</div>
-                        <div class="summary-subject-badge" onclick="switchViewPane('${subject}')" style="cursor:pointer;">${subject}</div>
-                        <div class="summary-details-text">${details}</div>
+                        <div class="text-left">
+                            <span class="text-lg font-black text-emerald-400">${stat.percentage}%</span>
+                        </div>
                     </div>
-                </div>`;
-        });
-
-        if(renderedCardsCount === 0 && validTodaySchedule.length === 0) {
-            display.innerHTML = `
-                <div class="empty-state-container">
-                    <div class="empty-state-title">لا يوجد ملخص لهذا اليوم</div>
-                    <p>لا توجد واجبات أو مذكرات مرفوعة حالياً.</p>
-                    <button class="btn-create-summary-placeholder" onclick="openAuthModal()">إنشاء ملخص لهذا اليوم</button>
-                </div>`;
-        } else {
-            display.innerHTML = summaryHtml;
-        }
-    }
-
-    function buildScheduleCards() {
-        const grid = document.getElementById('daily-schedule-cards-grid');
-        const todaySchedule = WEEKLY_SCHEDULE_MAP[currentDayName] || [];
-        const totalValid = todaySchedule.filter(s => s && s.trim() !== "" && s.trim() !== "غير مجدول");
-        
-        if (totalValid.length === 0) {
-            grid.innerHTML = '<p class="summary-empty-text" style="padding:10px 0;">لا توجد حصص مجدولة في هذا اليوم (إجازة رسمية أو نهاية أسبوع).</p>';
-            return;
+                `;
+                leaderboardList.insertAdjacentHTML('beforeend', itemHtml);
+            });
         }
 
-        let html = '';
-        todaySchedule.forEach((subject, index) => {
-            const isUnscheduled = (!subject || subject.trim() === "" || subject.trim() === "غير مجدول");
-            html += `
-                <div class="mini-schedule-card" ${!isUnscheduled ? `onclick="switchViewPane('${subject}')" style="cursor:pointer;"` : ''}>
-                    <div class="mini-card-num">${index + 1}</div>
-                    <div class="mini-card-name" style="${isUnscheduled ? 'color:#94a3b8; font-weight:normal;' : ''}">${isUnscheduled ? "غير مجدول" : subject}</div>
-                </div>`;
-        });
-        grid.innerHTML = html;
-    }
+        // --- EXERCISE MODAL FUNCTIONS ---
 
-    function openAuthModal() {
-        if (document.body.classList.contains('edit-mode')) { deactivateEditMode(); return; }
-        document.getElementById('secret-key-input').value = '';
-        document.getElementById('security-modal-overlay').classList.add('show');
-        setTimeout(() => document.getElementById('secret-key-input').focus(), 100);
-    }
+        function openExerciseModal(dayId, exerciseId = null) {
+            document.getElementById('modal-day-id').value = dayId;
+            document.getElementById('modal-exercise-id').value = exerciseId || '';
 
-    function closeAuthModal() { document.getElementById('security-modal-overlay').classList.remove('show'); }
+            const modalTitle = document.getElementById('modal-title');
+            const nameInput = document.getElementById('modal-ex-name');
+            const repsInput = document.getElementById('modal-ex-reps');
 
-    function verifyAdminCredentials() {
-        const enteredKey = document.getElementById('secret-key-input').value.trim();
-        
-        if (enteredKey === KEYS_CONFIG.MASTER) {
-            currentAuthScope = 'all';
-            closeAuthModal();
-            activateEditMode();
-        } else {
-            let foundSubject = null;
-            for (const [subject, code] of Object.entries(KEYS_CONFIG.SUBJECTS)) {
-                if (enteredKey === code) { foundSubject = subject; break; }
-            }
-
-            if (foundSubject) {
-                currentAuthScope = foundSubject;
-                closeAuthModal();
-                activateEditMode();
-                switchViewPane(foundSubject);
+            if (exerciseId) {
+                modalTitle.innerText = "تعديل التمرين";
+                const plan = getUserPlan();
+                const dayObj = plan.find(d => d.id === dayId);
+                const ex = dayObj ? dayObj.exercises.find(e => e.id === exerciseId) : null;
+                if (ex) {
+                    nameInput.value = ex.name;
+                    repsInput.value = ex.reps;
+                }
             } else {
-                alert("رمز التحقق الأمني غير صحيح!");
+                modalTitle.innerText = "إضافة تمرين جديد";
+                nameInput.value = '';
+                repsInput.value = '';
             }
+
+            document.getElementById('modal-exercise').classList.remove('hidden');
         }
-    }
 
-    function reapplyEditMode() {
-        if (currentAuthScope === 'all') {
-            document.querySelectorAll('.input-editor-textarea, .input-editor-text, .btn-pin-action').forEach(el => el.style.display = 'block');
-            document.querySelectorAll('.data-text-viewer').forEach(el => el.style.display = 'none');
-        } else if (currentAuthScope) {
-            document.querySelectorAll(`.scope-target-${currentAuthScope}`).forEach(el => el.style.display = 'block');
-            const pane = document.getElementById(`view-pane-${currentAuthScope}`);
-            if (pane) pane.querySelectorAll('.data-text-viewer').forEach(el => el.style.display = 'none');
+        function closeExerciseModal() {
+            document.getElementById('modal-exercise').classList.add('hidden');
         }
-    }
 
-    function activateEditMode() {
-        document.body.classList.add('edit-mode');
-        document.getElementById('admin-trigger-btn').innerText = "قفل التعديل";
+        function saveExercise(e) {
+            e.preventDefault();
+            const dayId = document.getElementById('modal-day-id').value;
+            const exerciseId = document.getElementById('modal-exercise-id').value;
+            const name = document.getElementById('modal-ex-name').value.trim();
+            const reps = document.getElementById('modal-ex-reps').value.trim();
 
-        document.getElementById('global-announcement-bar').classList.add('has-content');
+            if (!name || !reps) return;
 
-        if (currentAuthScope === 'all') {
-            document.body.classList.add('admin-full');
-            document.querySelectorAll('.input-editor-textarea, .input-editor-text, .btn-pin-action').forEach(el => el.style.display = 'block');
-            document.querySelectorAll('.data-text-viewer').forEach(el => el.style.display = 'none');
-        } else {
-            document.body.classList.remove('admin-full');
-            document.querySelectorAll(`.scope-target-${currentAuthScope}`).forEach(el => el.style.display = 'block');
-            document.getElementById(`view-pane-${currentAuthScope}`).querySelectorAll('.data-text-viewer').forEach(el => el.style.display = 'none');
-        }
-    }
+            const plan = getUserPlan();
+            const dayObj = plan.find(d => d.id === dayId);
+            if (!dayObj) return;
 
-    function deactivateEditMode() {
-        document.body.classList.remove('edit-mode', 'admin-full');
-        const drawer = document.getElementById('schedule-manager-drawer');
-        if (drawer) drawer.style.display = "none";
-        document.getElementById('admin-trigger-btn').innerText = "تعديل";
-        
-        document.querySelectorAll('.input-editor-textarea, .input-editor-text, .btn-pin-action').forEach(el => el.style.display = 'none');
-        document.querySelectorAll('.data-text-viewer').forEach(el => el.style.display = 'block');
-        
-        currentAuthScope = null;
-        switchViewPane('home');
-        loadMasterData(); 
-    }
-
-    function saveEditsToCloud() {
-        const todayPacket = {};
-        const pinnedPacket = {};
-        const schedulePacket = {};
-        const promises = [];
-
-        TOTAL_SUBJECTS_LIST.forEach(sub => {
-            if (currentAuthScope === 'all' || currentAuthScope === sub) {
-                todayPacket[sub] = {
-                    assignments: document.getElementById(`input-${sub}-assignments`).value.trim(),
-                    projects: document.getElementById(`input-${sub}-projects`).value.trim(),
-                    summaries: collectSummariesFromEditor(sub),
-                    notes: document.getElementById(`input-${sub}-notes`).value.trim()
-                };
-
-                ['projects', 'notes'].forEach(f => {
-                    const pinKey = `${sub}_${f}`;
-                    if (pinnedFieldsState[pinKey]) {
-                        pinnedPacket[pinKey] = { isPinned: true, value: document.getElementById(`input-${sub}-${f}`).value.trim() };
-                    } else {
-                        pinnedPacket[pinKey] = { isPinned: false, value: "" };
-                    }
+            if (exerciseId) {
+                // Update existing
+                const ex = dayObj.exercises.find(e => e.id === exerciseId);
+                if (ex) {
+                    ex.name = name;
+                    ex.reps = reps;
+                }
+            } else {
+                // Add new
+                dayObj.exercises.push({
+                    id: 'ex_' + Date.now(),
+                    name: name,
+                    reps: reps,
+                    status: 0
                 });
             }
-        });
 
-        if (currentAuthScope === 'all') {
-            DAYS_KEYS.forEach(day => {
-                schedulePacket[day] = [];
-                for(let i = 1; i <= 7; i++) {
-                    const txt = document.getElementById(`dropped-val-${day}-${i}`).innerText.trim();
-                    schedulePacket[day].push(txt || "غير مجدول");
-                }
-            });
-
-            const annTxt = document.getElementById('announcement-text-input').value.trim();
-            promises.push(fetch(`${FIREBASE_DB_URL}/cloud_announcement.json`, { method: 'PUT', body: JSON.stringify({ text: annTxt }) }));
+            saveUserPlan(plan);
+            closeExerciseModal();
+            renderAll();
         }
 
-        TOTAL_SUBJECTS_LIST.forEach(sub => {
-            if (currentAuthScope === 'all' || currentAuthScope === sub) {
-                // يتم الحفظ والرفع لـ Firebase بناءً على التاريخ المختار في شريط التنقل
-                promises.push(fetch(`${FIREBASE_DB_URL}/${viewingISODate}/${sub}.json`, { method: 'PUT', body: JSON.stringify(todayPacket[sub]) }));
+        function deleteExercise(dayId, exerciseId) {
+            if (!confirm("هل تريد حذف هذا التمرين؟")) return;
+            const plan = getUserPlan();
+            const dayObj = plan.find(d => d.id === dayId);
+            if (!dayObj) return;
+
+            dayObj.exercises = dayObj.exercises.filter(e => e.id !== exerciseId);
+            saveUserPlan(plan);
+            renderAll();
+        }
+
+        // --- VIEW SWITCHER ---
+
+        function switchView(view) {
+            const trackerBtn = document.getElementById('nav-tracker-btn');
+            const leaderboardBtn = document.getElementById('nav-leaderboard-btn');
+            const trackerSec = document.getElementById('view-tracker');
+            const leaderboardSec = document.getElementById('view-leaderboard');
+
+            if (view === 'tracker') {
+                trackerSec.classList.remove('hidden');
+                leaderboardSec.classList.add('hidden');
+                trackerBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 transition-all flex items-center gap-1.5 shadow-md";
+                leaderboardBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition-all flex items-center gap-1.5";
+            } else {
+                trackerSec.classList.add('hidden');
+                leaderboardSec.classList.remove('hidden');
+                leaderboardBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 transition-all flex items-center gap-1.5 shadow-md";
+                trackerBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition-all flex items-center gap-1.5";
+                renderLeaderboard();
             }
-        });
-
-        if (currentAuthScope === 'all') {
-            promises.push(fetch(`${FIREBASE_DB_URL}/pinned_data.json`, { method: 'PUT', body: JSON.stringify(pinnedPacket) }));
-            promises.push(fetch(`${FIREBASE_DB_URL}/app_weekly_schedule.json`, { method: 'PUT', body: JSON.stringify(schedulePacket) }));
         }
 
-        Promise.all(promises).then(() => {
-            deactivateEditMode();
-            loadMasterData(); 
-            alert("تم حفظ التعديلات والمزامنة بنجاح! 💾");
-        });
-    }
-
-    function cancelEditingSession() { loadMasterData(); deactivateEditMode(); }
-
-    // ====== إدارة الملفات المتعددة ======
-
-    let _entryCounter = 0;
-
-    function initSummariesEditor(sub, files) {
-        const list = document.getElementById(`files-list-${sub}`);
-        if (!list) return;
-        list.innerHTML = '';
-        if (files && files.length > 0) {
-            files.forEach(f => addSummaryEntry(sub, f.name || '', f.url || ''));
-        }
-    }
-
-    function renderSummariesPreview(sub, files) {
-        const viewEl = document.getElementById(`preview-${sub}-summaries`);
-        if (!viewEl) return;
-        if (!files || files.length === 0) {
-            viewEl.innerHTML = `<span class="summary-empty-text">لا يوجد محتوى مسجل</span>`;
-            return;
-        }
-        let html = '<div class="summary-files-display">';
-        files.forEach(f => {
-            if (f.url) {
-                html += `<a href="${f.url}" target="_blank" class="summary-file-link">📄 ${f.name || 'ملخص'}</a>`;
-            }
-        });
-        html += '</div>';
-        viewEl.innerHTML = html;
-    }
-
-    function addSummaryEntry(sub, name = '', url = '') {
-        const list = document.getElementById(`files-list-${sub}`);
-        if (!list) return;
-        const id = `entry-${sub}-${++_entryCounter}`;
-        const card = document.createElement('div');
-        card.className = 'file-entry-card';
-        card.id = id;
-        card.innerHTML = `
-            <div class="file-entry-header">
-                <input type="text" class="file-entry-name-input" placeholder="اسم الملف (مثال: ملخص الفصل الأول)" value="${name.replace(/"/g,'&quot;')}">
-                <button class="btn-remove-entry" onclick="removeSummaryEntry('${id}')" title="حذف">✕</button>
-            </div>
-            <div class="file-entry-upload-row">
-                <input type="file" id="fi-${id}" style="display:none;" accept="*/*" onchange="handleEntryFileSelected(event,'${id}')">
-                <button class="btn-entry-upload" id="fb-${id}" onclick="document.getElementById('fi-${id}').click()">📂 رفع ملف</button>
-                <span class="entry-upload-status" id="fs-${id}">${url ? '✅ تم تحميل ملف' : 'لم يتم اختيار ملف'}</span>
-            </div>
-            <div class="entry-progress-wrap" id="fp-${id}"><div class="entry-progress-bar" id="fpb-${id}"></div></div>
-            <div class="or-divider">أو أدخل رابطاً مباشراً</div>
-            <input type="text" class="file-entry-url-input" id="fu-${id}" placeholder="https://..." value="${url.replace(/"/g,'&quot;')}" dir="ltr">
-        `;
-        list.appendChild(card);
-    }
-
-    function removeSummaryEntry(id) {
-        const el = document.getElementById(id);
-        if (el) el.remove();
-    }
-
-    function collectSummariesFromEditor(sub) {
-        const list = document.getElementById(`files-list-${sub}`);
-        if (!list) return [];
-        const cards = list.querySelectorAll('.file-entry-card');
-        const files = [];
-        cards.forEach(card => {
-            const name = card.querySelector('.file-entry-name-input').value.trim();
-            const url  = card.querySelector('.file-entry-url-input').value.trim();
-            if (url) files.push({ name: name || 'ملف', url });
-        });
-        return files;
-    }
-
-    function handleEntryFileSelected(event, entryId) {
-        const file = event.target.files[0];
-        if (!file) return;
-        const MAX_SIZE = 60 * 1024 * 1024;
-        if (file.size > MAX_SIZE) {
-            alert("⚠️ حجم الملف يتجاوز الحد المسموح به (60MB).");
-            event.target.value = '';
-            return;
-        }
-        const statusEl = document.getElementById(`fs-${entryId}`);
-        const progressWrap = document.getElementById(`fp-${entryId}`);
-        const barEl = document.getElementById(`fpb-${entryId}`);
-        const btnEl = document.getElementById(`fb-${entryId}`);
-        const urlInput = document.getElementById(`fu-${entryId}`);
-        const nameInput = document.getElementById(entryId).querySelector('.file-entry-name-input');
-
-        progressWrap.style.display = 'block';
-        barEl.style.width = '5%';
-        barEl.style.background = '#10b981';
-        statusEl.textContent = '⏳ جاري التحضير...';
-        btnEl.disabled = true;
-
-        // تعبئة اسم الملف تلقائياً إن كان فارغاً
-        if (!nameInput.value.trim()) {
-            nameInput.value = file.name.replace(/\.[^/.]+$/, '');
-        }
-
-        fetch(GOFILE_API_SERVERS)
-            .then(res => res.json())
-            .then(data => {
-                if (data.status !== 'ok' || !data.data.servers.length) throw new Error('لا يوجد سيرفر');
-                const server = data.data.servers[0].name;
-                const formData = new FormData();
-                formData.append('file', file);
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', `https://${server}.gofile.io/contents/uploadFile`);
-                xhr.upload.onprogress = e => {
-                    if (e.lengthComputable) {
-                        const pct = Math.round(e.loaded / e.total * 100);
-                        barEl.style.width = pct + '%';
-                        statusEl.textContent = `⬆️ ${pct}%`;
-                    }
-                };
-                xhr.onload = () => {
-                    btnEl.disabled = false;
-                    if (xhr.status === 200) {
-                        const res = JSON.parse(xhr.responseText);
-                        if (res.status === 'ok' && res.data) {
-                            const link = res.data.directLink || res.data.downloadPage;
-                            urlInput.value = link;
-                            barEl.style.width = '100%';
-                            statusEl.textContent = `✅ تم: ${file.name}`;
-                        } else {
-                            barEl.style.background = '#ef4444';
-                            statusEl.textContent = '❌ فشل الرفع';
-                        }
-                    } else {
-                        barEl.style.background = '#ef4444';
-                        statusEl.textContent = `❌ خطأ HTTP ${xhr.status}`;
-                    }
-                };
-                xhr.onerror = () => {
-                    btnEl.disabled = false;
-                    barEl.style.background = '#ef4444';
-                    statusEl.textContent = '❌ خطأ في الاتصال';
-                };
-                xhr.send(formData);
-            })
-            .catch(err => {
-                btnEl.disabled = false;
-                barEl.style.background = '#ef4444';
-                statusEl.textContent = `❌ ${err.message}`;
-            });
-    }
-
-    // ====== وظائف رفع الملفات (عبر GoFile.io) ======
-
-    function handleFileSelected(event, sub) {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        const MAX_SIZE = 60 * 1024 * 1024; // 60MB
-        if (file.size > MAX_SIZE) {
-            alert("⚠️ حجم الملف يتجاوز الحد المسموح به (60MB).\nيرجى اختيار ملف أصغر حجماً.");
-            event.target.value = '';
-            return;
-        }
-
-        const statusEl = document.getElementById(`file-status-${sub}`);
-        const wrapEl   = document.getElementById(`progress-wrap-${sub}`);
-        const barEl    = document.getElementById(`progress-bar-${sub}`);
-        const btnEl    = document.getElementById(`file-btn-${sub}`);
-        const inputEl  = document.getElementById(`input-${sub}-summaries`);
-
-        wrapEl.style.display   = 'block';
-        barEl.style.width      = '5%';
-        barEl.style.background = '#10b981';
-        statusEl.textContent   = `⏳ جاري التحضير للرفع...`;
-        btnEl.disabled         = true;
-
-        // الخطوة 1: الحصول على أفضل سيرفر متاح من GoFile
-        fetch(GOFILE_API_SERVERS)
-            .then(res => res.json())
-            .then(data => {
-                if (data.status !== 'ok' || !data.data || !data.data.servers || !data.data.servers.length) {
-                    throw new Error('لم يتم العثور على سيرفر متاح');
-                }
-                const server = data.data.servers[0].name;
-                return uploadToGoFile(file, server, sub, statusEl, wrapEl, barEl, btnEl, inputEl);
-            })
-            .catch(err => {
-                btnEl.disabled         = false;
-                barEl.style.background = '#ef4444';
-                barEl.style.width      = '100%';
-                statusEl.textContent   = `❌ خطأ: ${err.message || 'تعذّر الاتصال بخدمة الرفع'}`;
-            });
-    }
-
-    function uploadToGoFile(file, server, sub, statusEl, wrapEl, barEl, btnEl, inputEl) {
-        return new Promise((resolve, reject) => {
-            const formData = new FormData();
-            formData.append('file', file);
-
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', `https://${server}.gofile.io/contents/uploadFile`);
-
-            xhr.upload.onprogress = (e) => {
-                if (e.lengthComputable) {
-                    const pct = Math.round((e.loaded / e.total) * 100);
-                    barEl.style.width    = pct + '%';
-                    statusEl.textContent = `⬆️ جاري الرفع... ${pct}%`;
-                }
-            };
-
-            xhr.onload = () => {
-                btnEl.disabled = false;
-                if (xhr.status === 200) {
-                    try {
-                        const res = JSON.parse(xhr.responseText);
-                        if (res.status === 'ok' && res.data) {
-                            // رابط التحميل المباشر إن وُجد، وإلا رابط صفحة الملف
-                            const link = res.data.directLink || res.data.downloadPage;
-                            inputEl.value        = link;
-                            barEl.style.width    = '100%';
-                            statusEl.textContent = `✅ تم الرفع بنجاح: ${file.name}`;
-                            resolve(link);
-                        } else {
-                            throw new Error(res.status || 'استجابة غير متوقعة من الخادم');
-                        }
-                    } catch (e) {
-                        barEl.style.background = '#ef4444';
-                        statusEl.textContent   = `❌ فشل تحليل الاستجابة: ${e.message}`;
-                        reject(e);
-                    }
-                } else {
-                    barEl.style.background = '#ef4444';
-                    barEl.style.width      = '100%';
-                    statusEl.textContent   = `❌ فشل الرفع (HTTP ${xhr.status}). تحقق من اتصالك بالإنترنت.`;
-                    reject(new Error(`HTTP ${xhr.status}`));
-                }
-            };
-
-            xhr.onerror = () => {
-                btnEl.disabled         = false;
-                barEl.style.background = '#ef4444';
-                barEl.style.width      = '100%';
-                statusEl.textContent   = `❌ خطأ في الاتصال. تحقق من الإنترنت.`;
-                reject(new Error('network error'));
-            };
-
-            xhr.send(formData);
-        });
-    }
-</script>
-
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', checkSession);
+    </script>
 </body>
 </html>
